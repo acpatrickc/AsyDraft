@@ -1,4 +1,4 @@
-package AsyDraft.AsyDraft;
+package AsyDraft.ui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

@@ -1,6 +1,6 @@
-package AsyDraft.AsyDraft;
+package AsyDraft.ui;
 
-import AsyDraft.AsyDraft.IconManager.Icons;
+import AsyDraft.ui.IconManager.Icons;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -80,7 +80,7 @@ public class MainPane extends BorderPane {
 	
 	TextArea resultarea;
 	
-	//TODO AsyEditor editor;
+	EditorPane editor;
 	SplitPane splitpane;
 	
 	TitledPane anglecongruences;
@@ -307,7 +307,9 @@ public class MainPane extends BorderPane {
 		//REMOVE LATER
 		//primaryStage.setOnShown(e -> {editscroll.lookup(".viewport").setStyle("-fx-background: rgb(210, 210, 210)");});
 		//^^^^^^^^^^^^^^^^
-		splitpane = new SplitPane(/*TODO*/ new Pane(), resultarea);
+		
+		editor = new EditorPane(10, 10, 50);
+		splitpane = new SplitPane(editor, resultarea);
 		
 		anglecongruences = new TitledPane("angle congruences", new Pane());
 		segmentcongruences = new TitledPane("segment congruences", new Pane());
