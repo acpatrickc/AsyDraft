@@ -1,0 +1,88 @@
+* {
+   -fx-tab-default: rgb(224, 224, 224);
+   -fx-tab-hover: rgb(230, 230, 230);
+   -fx-tab-selected: rgb(240, 240, 240);
+   -fx-tab-pressed: rgb(200, 200, 200);
+   -fx-component-border: rgb(200, 200, 200);
+   
+   -fx-selectable-default: rgb(224, 224, 224);
+   -fx-selectable-hover: rgb(214, 214, 214);
+   -fx-selectable-pressed: rgb(195, 195, 195);
+   -fx-component-border: rgb(200, 200, 200);
+}
+
+TabPane {
+    -fx-background-color: -fx-tab-selected;
+}
+
+.tab-header-background {
+    -fx-background-color: rgb(248, 248, 248);
+	-fx-border-color: -fx-component-border;
+    -fx-border-width: 0 0 1 0;
+}
+
+.tab {
+	-fx-border-width: 1 1 0 1;
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-border-color: -fx-component-border;
+	-fx-background-color: -fx-tab-default;
+}
+
+.tab:hover {
+	-fx-background-color: -fx-tab-hover;
+}
+
+.tab:pressed {
+	-fx-background-color: -fx-tab-pressed;
+}
+
+.tab:selected {
+	-fx-background-color: -fx-tab-selected;
+}
+
+.focus-indicator {
+	-fx-border-color: transparent;
+}
+
+TitledPane .content {
+	-fx-border-width: 0;
+}
+
+.title {
+	-fx-border-insets: 0 0 0.7 0;
+	-fx-border-width: 0 0 1 0;
+    -fx-background-color: rgb(240, 240, 240);
+	-fx-border-color: -fx-component-border;
+}
+
+.arrow {
+	-fx-effect: null;
+	-fx-background-color: black;
+	-fx-background-insets: 0;
+}
+
+CheckBox {
+	-fx-padding: 5;
+}
+
+
+CheckBox .box {
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+	
+}
+
+CheckBox:hover .box {
+	-fx-background-color:-fx-selectable-hover;
+	
+}
+
+CheckBox:pressed .box {
+	-fx-background-color:-fx-selectable-pressed;
+	
+}
+
+CheckBox:selected .mark {
+	-fx-shape: "M 0 7 L 1 5.5 L 3 10 L 7 1 L 8 2.5 L 3 14";
+}

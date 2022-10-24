@@ -1,0 +1,150 @@
+* {
+   -fx-selectable-default: rgb(224, 224, 224);
+   -fx-selectable-hover: rgb(214, 214, 214);
+   -fx-selectable-pressed: rgb(195, 195, 195);
+   -fx-component-border: rgb(200, 200, 200);
+}
+
+.drawingtoolbar Button {
+	-fx-padding: 0;
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+.drawingtoolbar Button:hover {
+	-fx-background-color:-fx-selectable-hover;
+}
+
+.drawingtoolbar Button:pressed {
+	-fx-background-color:-fx-selectable-pressed;
+}
+
+.drawingtoolbar Separator .line {
+	-fx-border-style: solid;
+	-fx-border-width: 0.75;
+	-fx-border-color:-fx-component-border;
+}
+
+.drawingtoolbar {
+	-fx-background-color: rgb(248, 248, 248);
+}
+
+.settingstoolbar {
+	-fx-background-color: rgb(248, 248, 248);
+}
+
+.settingstoolbar Button {
+	-fx-padding: 0;
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+.settingstoolbar Button:hover {
+	-fx-background-color:-fx-selectable-hover;
+}
+
+.settingstoolbar Button:pressed {
+	-fx-background-color:-fx-selectable-pressed;
+}
+
+.settingstoolbar ComboBox {
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+.settingstoolbar ComboBox:hover {
+	-fx-background-color:-fx-selectable-hover;
+}
+
+.settingstoolbar ComboBox:pressed {
+	-fx-background-color:-fx-selectable-pressed;
+}
+
+.settingstoolbar ComboBox .list-cell:selected {
+	-fx-background-color:-fx-selectable-default;
+	-fx-text-fill: black;
+}
+
+.settingstoolbar ComboBox .list-cell:hover {
+	-fx-background-color:-fx-selectable-hover;
+	-fx-text-fill: black;
+}
+
+.settingstoolbar Spinner {
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+.settingstoolbar Spinner .text-field {
+	-fx-background-insets: 0;
+}
+
+.settingstoolbar Spinner .increment-arrow-button, .decrement-arrow-button {
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+.settingstoolbar Spinner .increment-arrow-button:hover, .decrement-arrow-button:hover {
+	-fx-background-color:-fx-selectable-hover;
+}
+
+.settingstoolbar Spinner .increment-arrow-button:pressed, .decrement-arrow-button:pressed {
+	-fx-background-color:-fx-selectable-pressed;
+}
+
+.settingstoolbar Separator .line {
+	-fx-border-style: solid;
+	-fx-border-width: 0.75;
+	-fx-border-color:-fx-component-border;
+}
+
+.settingstoolbar RadioButton .radio {
+	-fx-border-color:-fx-component-border;
+	-fx-border-radius: 100;
+	-fx-background-color:-fx-selectable-default;
+	
+}
+
+.settingstoolbar RadioButton .radio:hover {
+	-fx-background-color:-fx-selectable-hover;
+	
+}
+
+.settingstoolbar RadioButton .radio:pressed {
+	-fx-background-color:-fx-selectable-pressed;
+	
+}
+
+.settingstoolbar TextField {
+	-fx-border-color:-fx-component-border;
+	-fx-background-insets: 0;
+}
+
+.settingstoolbar Slider .track {
+	-fx-background-color: rgb(212, 212, 212);
+}
+
+.settingstoolbar Slider .thumb {
+	-fx-border-radius: 100;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+.settingstoolbar Slider .thumb:hover {
+	-fx-background-color:-fx-selectable-hover;
+}
+
+.settingstoolbar Slider .thumb:pressed {
+	-fx-background-color:-fx-selectable-pressed;
+}
