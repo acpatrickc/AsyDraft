@@ -1,265 +1,178 @@
 package AsyDraft.ui;
 
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Stack;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.effect.BoxBlur;
-import javafx.scene.effect.GaussianBlur;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.text.TextAlignment;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
 
 public class EditorPane extends Pane {
-
+	/*
+	 * style of the display grid
+	 */
 	public enum Style {
 		pegboard,
 		grid,
 		blank
 	}
-	
 	private Style style = Style.pegboard;
-	
-	public final double minscale = 20;
-	public final double maxscale = 500;
-	
+	/*
+	 * width, height dimensions of grid
+	 * scale, length of space between gridlines
+	 */
 	private int width = 10;
 	private int height = 10;
 	private double scale = 50;
-	
+	/*
+	 * minimum and maximum scales
+	 */
+	public final double minscale = 20;
+	public final double maxscale = 500;
+	/*
+	 * margin, distance between first gridline and edge of drawing plane
+	 * shiftx, shifty, distance between (0,0) on screen and corner of drawing plane
+	 */
 	private int margin = 10;
 	private double shiftx = 10;
 	private double shifty = 10;
+	/*
+	 * dragx, dragy, used to store the drag location of the drawing plane
+	 */
 	private double dragx = 0;
 	private double dragy = 0;
-	
-	private boolean free = false;
-	//private boolean showdot = true;
-	
-	//check if scaled
-	private double mousex;
-	private double mousey;
+	/*
+	 * gridmousex, gridmousey, location of mouse on drawing plane relative to the grid
+	 * (0,0) on top left
+	 * mousevalid, if the mouse is able to create a point on the drawing plane
+	 */
+	private double gridmousex;
+	private double gridmousey;
 	private boolean mousevalid = false;
-	private boolean wasscrolling;
-	
-	private boolean snaptomidpoint;
-	private boolean snaptoendpoint;
-	private boolean snaptopoint;
-	private boolean snaptocenter;
-	private boolean snaptocircle;
-	private boolean snaptolattice;
-
+	/*
+	 * canvas, the JavaFX object that the editor is drawn onto
+	 */
 	private Canvas canvas = new Canvas();
 	
-	//private Label infolabel = new Label();
-	
-	public EditorPane(int l, int h, int s) {
-		width = l;
+	public EditorPane(int w, int h, int s) {
+		width = w;
 		height = h;
 		scale = s;
+		/*
+		 * adds canvas as child
+		 * resizes canvas along with pane
+		 */
 		getChildren().add(canvas);
 		widthProperty().addListener(e -> {canvas.setWidth(getWidth());});
-		heightProperty().addListener(e -> {canvas.setHeight(getHeight() /*- info.getHeight()*/);});
+		heightProperty().addListener(e -> {canvas.setHeight(getHeight());});
+		/*
+		 * sets initial width and height of canvas so as it renders initially, the drawing plane is not misplaced
+		 */
 		setWidth(width * scale + 2 * (margin + shiftx));
 		setHeight(height * scale + 2 * (margin + shifty));
 		setMinWidth(45);
-		
+		/*
+		 * when the mouse moves, it updates gridmousex,y and mouse validity and repaints
+		 */
 		canvas.setOnMouseMoved(new EventHandler<MouseEvent>() {
-			
 			@Override
 			public void handle(MouseEvent e) {
-				mousex = e.getX() - shiftx - margin;
-				mousey = e.getY() - shifty - margin;
-				if (mousex >= 0 && mousex <= width * scale && mousey >= 0 && mousey <= height * scale) {
-					mousevalid = true;
-					
-				} else {
-					mousevalid = false;
-				}
+				gridmousex = e.getX() - shiftx - margin;
+				gridmousey = e.getY() - shifty - margin;
+				updateMouseValidity();
 				layoutChildren();
 			}
 		});
-		
+		/*
+		 * when the mouse is dragged, it moves the drawing plane along with the mouse and repaints
+		 */
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
-
 			@Override
 			public void handle(MouseEvent e) {
-				//System.out.println("dragged");
 				double prevshiftx = shiftx;
 				double prevshifty = shifty;
 				if (dragx != 0 && dragy !=0) {
 					shiftx += e.getX() - dragx;
 					shifty += e.getY() - dragy;
 				}
-				
 				if (!(shiftx > -width * scale && shiftx < getWidth() - 2 * margin)) {
 					shiftx = prevshiftx;
-					//shifty = prevshifty;
 				}
 				if (!(shifty > -height * scale && shifty < getHeight() - 2 * margin)) {
-					//shiftx = prevshiftx;
 					shifty = prevshifty;
 				}
 				dragx = e.getX();
 				dragy = e.getY();
 				layoutChildren();
-				//clicknumber = 0;
-				wasscrolling = true;
-				//clicknumber = 0;
-				setCursor(Cursor.CLOSED_HAND);
 			}
 		});
-		
+		/*
+		 * resets drag coordinates once mouse is released from drag
+		 */
 		canvas.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
 				dragx = 0;
 				dragy = 0;
-				setCursor(Cursor.DEFAULT);
 			}
 		});
-		
+		/*
+		 * changes mouse cursor and focuses onto this EditorPane
+		 */
 		setOnMouseEntered(new EventHandler<MouseEvent>() {
-
 			@Override
 			public void handle(MouseEvent e) {
 				requestFocus();
 				canvas.setCursor(Cursor.CROSSHAIR);
-				//Tooltip.install(new TextField(), new Tooltip("123"));
 			}
 		});
-		
-		widthProperty().addListener(e -> {fixScroll();});
-		heightProperty().addListener(e -> {fixScroll();});
-		
+		/*
+		 * resizes drawing plane as scrolling occurs
+		 */
 		canvas.setOnScroll(new EventHandler<ScrollEvent>() {
-
 			@Override
 			public void handle(ScrollEvent e) {
 				double omousex = (e.getX() - shiftx - margin) / scale;
 				double omousey = (e.getY() - shifty - margin) / scale;
 				setScale(scale += e.getDeltaY() / (200 / scale));
 				setScale(scale += e.getDeltaX() / (200 / scale));
-				
 				shiftx += e.getX() - shiftx - margin - omousex * scale;
 				shifty += e.getY() - shifty - margin - omousey * scale;
-				fixScroll();
-				
-				mousex = e.getX() - shiftx - margin;
-				mousey = e.getY() - shifty - margin;
-				if (mousex >= 0 && mousex <= width * scale && mousey >= 0 && mousey <= height * scale) {
-					mousevalid = true;
-					
-				} else {
-					mousevalid = false;
-				}
-				
+				fixLocation();
+				gridmousex = e.getX() - shiftx - margin;
+				gridmousey = e.getY() - shifty - margin;
+				updateMouseValidity();
 				layoutChildren();
 			}
 		});
-		
 		/*
-		labelletterspinner = new Spinner<>(1, 17576, 2);
-		labelletterspinner.setEditable(true);
-		labelletterspinner.setPrefWidth(140);
-		
-		labelletterspinner.getValueFactory().setConverter(new StringConverter<Integer>() {
-			
-			@Override
-			public String toString(Integer i) {
-				return MathUtils.intoAlphabet(i);
-			}
-			
-			@Override
-			public Integer fromString(String s) {
-				char[] letters = s.toUpperCase().toCharArray();
-				int i = letters.length - 1;
-				int value = 0;
-				for (char c : letters) {
-					value += (((int) c) - 64) * Math.pow(26, i);
-					i--;
-				}
-				//System.out.println(value);
-				return value;
-			}
-			
-		});
-		labelletterspinner.getValueFactory().setValue(1);
-		labelletterspinner.valueProperty().addListener(e -> {labelletter = labelletterspinner.getValue();});
-		
-		labelmode = new ComboBox<>();
-		labelmode.getItems().add("alphabetical");
-		labelmode.getItems().add("custom");
-		labelmode.getSelectionModel().select("alphabetical");
-		labelmode.valueProperty().addListener(e -> {
-			switch (labelmode.getValue()) {
-				case "alphabetical":
-					labelcustom = false;
-					labelsettings.getChildren().remove(labeltext);
-					labelsettings.getChildren().add(labelletterspinner);
-					break;
-				
-				case "custom":
-					labelcustom = true;
-					labelsettings.getChildren().remove(labelletterspinner);
-					labelsettings.getChildren().add(labeltext);
-					break;
-			}
-		});
-		
-		labeltext = new TextField();
-		labeltext.setPrefWidth(140);
-		
-		labelsettings = new HBox(labelmode, labelletterspinner);
-		*/
-		
+		 * ensures that the drawing plane does not exceed the bounds of this EditorPane
+		 */
+		widthProperty().addListener(e -> {fixLocation();});
+		heightProperty().addListener(e -> {fixLocation();});
 	}
-	
+	/*
+	 * paints the grid and background and elements on the canvas
+	 */
 	@Override
 	protected void layoutChildren() {
 		super.layoutChildren();
-		
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		//calculateSnapPoint();
-		
-
+		/*
+		 * fills background
+		 * translates to drawing plane start
+		 * draws drawing plane
+		 * translates to margins
+		 * draws grid or selected style
+		 */
 		gc.setFill(Color.grayRgb(210));
 		gc.fillRect(0, 0, getWidth(), getHeight());
 		gc.translate(shiftx, shifty);
-		
 		gc.setFill(Color.grayRgb(255));
 		gc.fillRoundRect(0, 0, width * scale + 2 * margin, height * scale + 2 * margin, 8, 8);
 		gc.translate(margin, margin);
-
 		gc.setLineWidth(1);
 		if (style.equals(Style.pegboard)) {
 			gc.setStroke(Color.BLACK);
@@ -278,27 +191,22 @@ public class EditorPane extends Pane {
 				gc.strokeLine(0, y, width * scale, y);
 			}
 		}
-		
 		/*
-		gc.setLineCap(StrokeLineCap.ROUND);
-
-		gc.setStroke(Color.BLACK);
-		for (AsyObject a : renderobjects) {
-			a.render(scale, gc, snappoint);
-		}
-		*/
-		
+		 * translates back for next interation of render loop
+		 */
 		gc.translate(-shiftx, -shifty);
 		gc.translate(-margin, -margin);
 	}
-	
+	/*
+	 * sets style of the grid
+	 */
 	public void setStyle(Style style) {
 		this.style = style;
 		layoutChildren();
 	}
-	
-	//TODO selection mode
-	
+	/*
+	 * centers the drawing plane
+	 */
 	public void center() {
 		if (getWidth() < getHeight()) {
 			setScale((getWidth() - 4 * margin) / width);
@@ -308,47 +216,45 @@ public class EditorPane extends Pane {
 		shiftx = (getWidth() - (scale * width + 2 * margin)) / 2;
 		shifty = (getHeight() - (scale * height + 2 * margin)) / 2;
 		layoutChildren();
-		
 	}
-	
-	public void undo() {
-		//TODO
-	}
-	
-	public void redo() {
-		//TODO
-	}
-	
+	/*
+	 * sets scale of the drawing plane
+	 */
 	public void setScale(double scale) {
 		double omousex = (getWidth() / 2 - shiftx - margin) / this.scale;
 		double omousey = (getHeight() / 2 - shifty - margin) / this.scale;
 		shiftx += getWidth() / 2 - shiftx - margin - omousex * scale;
 		shifty += getHeight() / 2 - shifty - margin - omousey * scale;
-		
 		this.scale = scale < minscale ? minscale : scale > maxscale ? maxscale : scale;
-		//TODO sizeslider.setValue(this.scale);
-		fixScroll();
+		fixLocation();
 		layoutChildren();
 	}
-	
-	private void fixScroll() {
+	/*
+	 * ensures that the drawing plane does not leave the bounds of the EditorPane
+	 */
+	private void fixLocation() {
 		if (!(shiftx > -width * scale)) {
 			shiftx = -width * scale;
-			//shifty = prevshifty;
 		}
 		if (!(shifty > -height * scale)) {
-			//shiftx = prevshiftx;
 			shifty = -height * scale;
 		}
 		if (!(shiftx < getWidth() - 2 * margin)) {
-			//shiftx = prevshiftx;
 			shiftx = getWidth() - 2 * margin;
 		} 
 		if (!(shifty < getHeight() - 2 * margin)) {
-			//shiftx = prevshiftx;
 			shifty = getHeight() - 2 * margin;
 		} 
 	}
-
+	/*
+	 * updates the mousevalid value
+	 */
+	private void updateMouseValidity() {
+		if (gridmousex >= 0 && gridmousex <= width * scale && gridmousey >= 0 && gridmousey <= height * scale) {
+			mousevalid = true;
+		} else {
+			mousevalid = false;
+		}
+	}
 	
 }

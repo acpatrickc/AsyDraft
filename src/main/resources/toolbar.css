@@ -5,7 +5,7 @@
    -fx-component-border: rgb(200, 200, 200);
 }
 
-.drawingtoolbar Button {
+.drawingtoolbar ToolBarItem {
 	-fx-padding: 0;
 	-fx-background-radius: 0;
 	-fx-background-insets: 0;
@@ -13,11 +13,11 @@
 	-fx-background-color:-fx-selectable-default;
 }
 
-.drawingtoolbar Button:hover {
+.drawingtoolbar ToolBarItem:hover {
 	-fx-background-color:-fx-selectable-hover;
 }
 
-.drawingtoolbar Button:pressed {
+.drawingtoolbar ToolBarItem:pressed {
 	-fx-background-color:-fx-selectable-pressed;
 }
 
@@ -35,7 +35,7 @@
 	-fx-background-color: rgb(248, 248, 248);
 }
 
-.settingstoolbar Button {
+.settingstoolbar ToolBarItem {
 	-fx-padding: 0;
 	-fx-background-radius: 0;
 	-fx-background-insets: 0;
@@ -43,11 +43,11 @@
 	-fx-background-color:-fx-selectable-default;
 }
 
-.settingstoolbar Button:hover {
+.settingstoolbar ToolBarItem:hover {
 	-fx-background-color:-fx-selectable-hover;
 }
 
-.settingstoolbar Button:pressed {
+.settingstoolbar ToolBarItem:pressed {
 	-fx-background-color:-fx-selectable-pressed;
 }
 
