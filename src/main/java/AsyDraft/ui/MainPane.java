@@ -24,13 +24,13 @@ public class MainPane extends BorderPane {
 	 * draw function buttons
 	 */
 	ToolBarItem undo;
-    ToolBarItem redo;
-    ToolBarItem mouse;
-    ToolBarItem segment;
-    ToolBarItem arrow;
-    ToolBarItem reversearrow;
-    ToolBarItem midarrow;
-    ToolBarItem doublearrow;
+	ToolBarItem redo;
+	ToolBarItem mouse;
+	ToolBarItem segment;
+	ToolBarItem arrow;
+	ToolBarItem reversearrow;
+	ToolBarItem midarrow;
+	ToolBarItem doublearrow;
 	ToolBarItem circle;
 	ToolBarItem incircle;
 	ToolBarItem circumcircle;
@@ -102,15 +102,15 @@ public class MainPane extends BorderPane {
 		 * initiates buttons used to toggle each draw function of this program
 		 */
 		undo = new ToolBarItem(Icons.undo, "", null);
-        redo = new ToolBarItem(Icons.redo, "", null);
+		redo = new ToolBarItem(Icons.redo, "", null);
 		mouse = new ToolBarItem(Icons.mouse, "", null);
-        segment = new ToolBarItem(Icons.segment, "", null);
-        arrow = new ToolBarItem(Icons.arrow, "", null);
-        reversearrow = new ToolBarItem(Icons.reversearrow, "", null);
-        midarrow = new ToolBarItem(Icons.midarrow, "", null);
-        doublearrow = new ToolBarItem(Icons.doublearrow, "", null);
-        point = new ToolBarItem(Icons.point, "", null);
-        circle = new ToolBarItem(Icons.circle, "", null);
+		segment = new ToolBarItem(Icons.segment, "", null);
+		arrow = new ToolBarItem(Icons.arrow, "", null);
+		reversearrow = new ToolBarItem(Icons.reversearrow, "", null);
+		midarrow = new ToolBarItem(Icons.midarrow, "", null);
+		doublearrow = new ToolBarItem(Icons.doublearrow, "", null);
+		point = new ToolBarItem(Icons.point, "", null);
+		circle = new ToolBarItem(Icons.circle, "", null);
 		label = new ToolBarItem(Icons.label, "", null);
 		center = new ToolBarItem(Icons.center, "", null);
 		incircle = new ToolBarItem(Icons.incircle, "", null);

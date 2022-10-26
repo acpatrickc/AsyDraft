@@ -160,42 +160,8 @@ public class EditorPane extends Pane {
 	protected void layoutChildren() {
 		super.layoutChildren();
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		/*
-		 * fills background
-		 * translates to drawing plane start
-		 * draws drawing plane
-		 * translates to margins
-		 * draws grid or selected style
-		 */
-		gc.setFill(Color.grayRgb(210));
-		gc.fillRect(0, 0, getWidth(), getHeight());
-		gc.translate(shiftx, shifty);
-		gc.setFill(Color.grayRgb(255));
-		gc.fillRoundRect(0, 0, width * scale + 2 * margin, height * scale + 2 * margin, 8, 8);
-		gc.translate(margin, margin);
-		gc.setLineWidth(1);
-		if (style.equals(Style.pegboard)) {
-			gc.setStroke(Color.BLACK);
-			gc.setFill(Color.BLACK);
-			for (double x = 0; x <= width * scale + 1; x += scale) {	
-				for (double y = 0; y <= height * scale + 1; y += scale) {
-					gc.fillOval(x-1, y-1, 2, 2);
-				}
-			}
-		} else if (style.equals(Style.grid)) {
-			gc.setStroke(Color.LIGHTGRAY);
-			for (double x = 0; x <= width * scale + 1; x += scale) {	
-				gc.strokeLine(x, 0, x, height * scale);
-			}
-			for (double y = 0; y <= height * scale + 1; y += scale) {	
-				gc.strokeLine(0, y, width * scale, y);
-			}
-		}
-		/*
-		 * translates back for next interation of render loop
-		 */
-		gc.translate(-shiftx, -shifty);
-		gc.translate(-margin, -margin);
+		paintBase(gc);
+		paintMouseLocation(gc);
 	}
 	/*
 	 * sets style of the grid
@@ -256,5 +222,57 @@ public class EditorPane extends Pane {
 			mousevalid = false;
 		}
 	}
-	
+	/*
+	 * paints the base of the editor, background and drawing plane
+	 */
+	private void paintBase(GraphicsContext gc) {
+		/*
+		 * fills background
+		 * translates to drawing plane start
+		 * draws drawing plane
+		 * translates to margins
+		 * draws grid or selected style
+		 */
+		gc.setFill(Color.grayRgb(210));
+		gc.fillRect(0, 0, getWidth(), getHeight());
+		gc.translate(shiftx, shifty);
+		gc.setFill(Color.grayRgb(255));
+		gc.fillRoundRect(0, 0, width * scale + 2 * margin, height * scale + 2 * margin, 8, 8);
+		gc.translate(margin, margin);
+		gc.setLineWidth(1);
+		if (style.equals(Style.pegboard)) {
+			gc.setStroke(Color.BLACK);
+			gc.setFill(Color.BLACK);
+			for (double x = 0; x <= width * scale + 1; x += scale) {	
+				for (double y = 0; y <= height * scale + 1; y += scale) {
+					gc.fillOval(x-1, y-1, 2, 2);
+				}
+			}
+		} else if (style.equals(Style.grid)) {
+			gc.setStroke(Color.LIGHTGRAY);
+			for (double x = 0; x <= width * scale + 1; x += scale) {	
+				gc.strokeLine(x, 0, x, height * scale);
+			}
+			for (double y = 0; y <= height * scale + 1; y += scale) {	
+				gc.strokeLine(0, y, width * scale, y);
+			}
+		}
+		/*
+		 * translates back for next interation of render loop
+		 */
+		gc.translate(-shiftx, -shifty);
+		gc.translate(-margin, -margin);
+	}
+	/*
+	 * paints what the mouse is currently locked onto on the drawing plane
+	 */
+	private void paintMouseLocation(GraphicsContext gc) {
+		if (mousevalid) {
+			double latticex = scale * Math.round(gridmousex / scale);
+			double latticey = scale * Math.round(gridmousey / scale);
+			gc.translate(shiftx + margin, shifty + margin);
+			gc.strokeOval(latticex - 4, latticey - 4, 8, 8);
+			gc.translate(- (shiftx + margin), - (shifty + margin));
+		}
+	}
 }

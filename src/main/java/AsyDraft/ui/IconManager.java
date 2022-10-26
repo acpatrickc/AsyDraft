@@ -125,6 +125,6 @@ public abstract class IconManager {
 		img.setEffect(new GaussianBlur(1));
 		return img;
 	}
-	
+
 	
 }
