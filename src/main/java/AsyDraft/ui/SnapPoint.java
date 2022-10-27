@@ -5,10 +5,12 @@ public class SnapPoint {
 	 * x coordinate
 	 * y coordinate
 	 * description of point (eg. "midpoint", "endpoint", "center")
+	 * valid, if the point is a valid point
 	 */
 	private double x;
 	private double y;
 	private String description;
+	private boolean valid = false;
 	/*
 	 * A custom point object used for storing a point that is snappable to on the drawing plane
 	 */
@@ -16,6 +18,20 @@ public class SnapPoint {
 		this.x = x;
 		this.y = y;
 		this.description = description;
+		valid = true;
+	}
+	/*
+	 * creates an invalid snap point
+	 */
+	public SnapPoint() {}
+	/*
+	 * sets the properties of this snap point
+	 */
+	public void setpoint(double x, double y, String description) {
+		this.x = x;
+		this.y = y;
+		this.description = description;
+		valid = true;
 	}
 	/*
 	 * calculates the distance of a point to this SnapPoint
@@ -28,5 +44,17 @@ public class SnapPoint {
 	 */
 	public String getDescription() {
 		return description;
+	}
+	/*
+	 * returns x coordinate
+	 */
+	public double getX() {
+		return x;
+	}
+	/*
+	 * returns y coordinate
+	 */
+	public double getY() {
+		return y;
 	}
 }

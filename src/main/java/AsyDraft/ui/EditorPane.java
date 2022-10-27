@@ -52,6 +52,10 @@ public class EditorPane extends Pane {
 	private double gridmousey;
 	private boolean mousevalid = false;
 	/*
+	 * the SnapPointContainer for all snap points in this EditorPane
+	 */
+	private SnapPointContainer snapcontainer = new SnapPointContainer(true);
+	/*
 	 * canvas, the JavaFX object that the editor is drawn onto
 	 */
 	private Canvas canvas = new Canvas();
@@ -267,12 +271,23 @@ public class EditorPane extends Pane {
 	 * paints what the mouse is currently locked onto on the drawing plane
 	 */
 	private void paintMouseLocation(GraphicsContext gc) {
+		SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
 		if (mousevalid) {
-			double latticex = scale * Math.round(gridmousex / scale);
-			double latticey = scale * Math.round(gridmousey / scale);
 			gc.translate(shiftx + margin, shifty + margin);
-			gc.strokeOval(latticex - 4, latticey - 4, 8, 8);
+			gc.strokeOval(pxScale(snappoint.getX()) - 4, pxScale(snappoint.getY()) - 4, 8, 8);
 			gc.translate(- (shiftx + margin), - (shifty + margin));
 		}
+	}
+	/*
+	 * scales down to grid scale
+	 */
+	private double gridScale(double x) {
+		return x / scale;
+	}
+	/*
+	 * scales up to pixel scale
+	 */
+	private double pxScale(double x) {
+		return scale * x;
 	}
 }
