@@ -1,2 +1,2 @@
 # AsyDraft
-A graphical Asymptote editor for designed for mathematics competitions
+A graphical Asymptote editor designed for mathematics competitions

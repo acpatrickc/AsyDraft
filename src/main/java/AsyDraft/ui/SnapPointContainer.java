@@ -7,34 +7,39 @@ import AsyDraft.asyEditorObjects.AsyEditorObject;
 
 public class SnapPointContainer {
 	/*
-	 * objects, stores all objects that is contained in this SnapPointContainer
-	 * points, stores all SnapPoints
-	 * snaptolattice, whether or not lattice points are snapped to.
+	 * snaptolattice, whether or not lattice points are snapped to
+	 * objectmanager, where visible objects are obtained from
 	 */
-	private ArrayList<AsyEditorObject> objects = new ArrayList<>();
-	private HashSet<SnapPoint> points = new HashSet<>();
 	private boolean snaptolattice;
+	private EditorObjectManager objectmanager;
 	
-	public SnapPointContainer(boolean lattice) {
+	public SnapPointContainer(boolean lattice, EditorObjectManager objectmanager) {
 		snaptolattice = lattice;
+		this.objectmanager = objectmanager;
 	}
 	/*
-	 * adds an object to this SnapPointContainer
-	 * adds the SnapPoints from that object to the set of points
-	 */
-	public void addObject(AsyEditorObject o) {
-		objects.add(o);
-		for (SnapPoint p : o.getSnapPoints()) points.add(p);
-	}
-	/*
-	 * returns the closese snappable point
+	 * searches for and returns the closest snappable point
 	 */
 	public SnapPoint snap(double x, double y) {
 		SnapPoint point = new SnapPoint();
+		double distance = -1;
 		if (snaptolattice) {
 			double latticex = Math.round(x);
 			double latticey = Math.round(y);
 			point.setpoint(latticex, latticey, "lattice point");
+			distance = point.distanceTo(x, y);
+		}
+		/*
+		 * for each visible object, check all of its snap points for a close one than the current closest
+		 * replace the current snap point with the new closest
+		 */
+		for (AsyEditorObject eo : objectmanager.getVisibleObjects()) {
+			for (SnapPoint p : eo.getSnapPoints()) {
+				if (p.distanceTo(x, y) < distance) {
+					point = p;
+					distance = p.distanceTo(x, y);
+				}
+			}
 		}
 		return point;
 	}

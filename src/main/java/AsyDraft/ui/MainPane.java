@@ -1,6 +1,9 @@
 package AsyDraft.ui;
 
+import AsyDraft.ui.FunctionPointTracker.Functions;
 import AsyDraft.ui.IconManager.Icons;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
@@ -99,12 +102,36 @@ public class MainPane extends BorderPane {
 	
 	public MainPane() {
 		/*
-		 * initiates buttons used to toggle each draw function of this program
+		 * initiates buttons used to toggle each function of this program
 		 */
-		undo = new ToolBarItem(Icons.undo, "", null);
-		redo = new ToolBarItem(Icons.redo, "", null);
-		mouse = new ToolBarItem(Icons.mouse, "", null);
-		segment = new ToolBarItem(Icons.segment, "", null);
+		undo = new ToolBarItem(Icons.undo, "", new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				editor.undo();
+			}
+		});
+		redo = new ToolBarItem(Icons.redo, "", new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				editor.redo();
+			}
+		});
+		mouse = new ToolBarItem(Icons.mouse, "", new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.nofunction);
+			}
+		});
+		segment = new ToolBarItem(Icons.segment, "", new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.segment);
+			}
+		});
 		arrow = new ToolBarItem(Icons.arrow, "", null);
 		reversearrow = new ToolBarItem(Icons.reversearrow, "", null);
 		midarrow = new ToolBarItem(Icons.midarrow, "", null);

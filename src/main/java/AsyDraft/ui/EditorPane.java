@@ -54,14 +54,15 @@ public class EditorPane extends Pane {
 	private double gridmousey;
 	private boolean mousevalid = false;
 	/*
-	 * the SnapPointContainer for all snap points in this EditorPane
 	 * pointtracker, tracks points and creates AsyEditorObjects
+	 * objectmanager, stores objects created
+	 * the SnapPointContainer for all snap points in this EditorPane
 	 * snappoint, the current point the mouse is snapped to
 	 */
-	private SnapPointContainer snapcontainer = new SnapPointContainer(true);
 	private FunctionPointTracker pointtracker = new FunctionPointTracker();
-	private SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
 	private EditorObjectManager objectmanager = new EditorObjectManager();
+	private SnapPointContainer snapcontainer = new SnapPointContainer(true, objectmanager);
+	private SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
 	/*
 	 * canvas, the JavaFX object that the editor is drawn onto
 	 */

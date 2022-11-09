@@ -8,7 +8,7 @@ public interface AsyEditorObject {
 	/*
 	 * returns AsyObject associated with this Editor Object
 	 */
-	public AsyObject getAsyObject();
+	public AsyObject getAsyObject(int gridwidth, int gridheight);
 	/*
 	 * draws this object on screen
 	 */

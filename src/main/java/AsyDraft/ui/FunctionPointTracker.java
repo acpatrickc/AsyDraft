@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 import AsyDraft.asyEditorObjects.AsyEditorObject;
+import AsyDraft.asyEditorObjects.AsyEditorSegment;
+import AsyDraft.asyObjects.AsySegment;
 
 public class FunctionPointTracker {
 	/*
@@ -66,9 +68,35 @@ public class FunctionPointTracker {
 			points.add(new double[] {x , y});
 			pointcount ++;
 			if (pointcount == requiredpoints.get(currentfunction)) {
+				switch (currentfunction) {
+					case segment:
+						double[] p = points.remove();
+						double[] p1 = points.remove();
+						waitlist.add(new AsyEditorSegment(p[0], p[1], p1[0], p1[1]));
+						break;
+					case beginarrow:
+						break;
+					case endarrow:
+						break;
+					case doublearrow:
+						break;
+					case midarrow:
+						break;
+					case circle:
+						break;
+					case circumcircle:
+						break;
+					case incircle:
+						break;
+					case point:
+						break;
+					case nofunction:
+						break;
+					default:
+						break;
+				}
 				pointcount = 0;
 				points.clear();
-				//TODO waitlist.add():
 			}
 		}
 	}

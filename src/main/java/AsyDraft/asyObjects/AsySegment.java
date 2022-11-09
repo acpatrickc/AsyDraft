@@ -1,6 +1,9 @@
 package AsyDraft.asyObjects;
 
 public class AsySegment implements AsyObject {
+	/*
+	 * start and end coordinates
+	 */
 	private double startx;
 	private double starty;
 	private double endx;

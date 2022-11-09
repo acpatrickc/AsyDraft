@@ -38,5 +38,10 @@ public class EditorObjectManager {
 	public void undo() {
 		if (!visibleobjects.isEmpty()) invisibleobjects.add(visibleobjects.pop());
 	}
-	
+	/*
+	 * returns the visible objects
+	 */
+	public Stack<AsyEditorObject> getVisibleObjects() {
+		return visibleobjects;
+	}
 }
