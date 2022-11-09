@@ -1,5 +1,6 @@
 package AsyDraft.ui;
 
+import AsyDraft.ui.FunctionPointTracker.Functions;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -43,6 +44,7 @@ public class EditorPane extends Pane {
 	 */
 	private double dragx = 0;
 	private double dragy = 0;
+	private boolean isdragging = false;
 	/*
 	 * gridmousex, gridmousey, location of mouse on drawing plane relative to the grid
 	 * (0,0) on top left
@@ -53,8 +55,13 @@ public class EditorPane extends Pane {
 	private boolean mousevalid = false;
 	/*
 	 * the SnapPointContainer for all snap points in this EditorPane
+	 * pointtracker, tracks points and creates AsyEditorObjects
+	 * snappoint, the current point the mouse is snapped to
 	 */
 	private SnapPointContainer snapcontainer = new SnapPointContainer(true);
+	private FunctionPointTracker pointtracker = new FunctionPointTracker();
+	private SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
+	private EditorObjectManager objectmanager = new EditorObjectManager();
 	/*
 	 * canvas, the JavaFX object that the editor is drawn onto
 	 */
@@ -79,6 +86,7 @@ public class EditorPane extends Pane {
 		setMinWidth(45);
 		/*
 		 * when the mouse moves, it updates gridmousex,y and mouse validity and repaints
+		 * updates snap point and its validity
 		 */
 		canvas.setOnMouseMoved(new EventHandler<MouseEvent>() {
 			@Override
@@ -87,14 +95,23 @@ public class EditorPane extends Pane {
 				gridmousey = e.getY() - shifty - margin;
 				updateMouseValidity();
 				layoutChildren();
+				if (mousevalid) {
+					snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
+				} else {
+					snappoint = new SnapPoint();
+				}
 			}
 		});
 		/*
 		 * when the mouse is dragged, it moves the drawing plane along with the mouse and repaints
+		 * sets isdragging to true
+		 * if mouse is pressed then moved, then true
+		 * if mouse is pressed then not moved, then false
 		 */
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				isdragging = true;
 				double prevshiftx = shiftx;
 				double prevshifty = shifty;
 				if (dragx != 0 && dragy !=0) {
@@ -113,6 +130,15 @@ public class EditorPane extends Pane {
 			}
 		});
 		/*
+		 * sets wasdragging to false
+		 */
+		canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				isdragging = false;
+			}
+		});
+		/*
 		 * resets drag coordinates once mouse is released from drag
 		 */
 		canvas.setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -122,6 +148,7 @@ public class EditorPane extends Pane {
 				dragy = 0;
 			}
 		});
+		
 		/*
 		 * changes mouse cursor and focuses onto this EditorPane
 		 */
@@ -152,6 +179,23 @@ public class EditorPane extends Pane {
 			}
 		});
 		/*
+		 * feeds a point to the current function in the pointtracker when a click occurs
+		 * only if the click was stationary, not a drag
+		 * checks for newly generated objects in the function point tracker and adds them to the objectmanager
+		 */
+		canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				if (!isdragging) {
+					pointtracker.feedPoint(snappoint.getX(), snappoint.getY());
+					while (!pointtracker.waitlistEmpty()) {
+						objectmanager.addEditorObject(pointtracker.takeEditorObject());
+					}
+				}
+				layoutChildren();
+			}
+		});
+		/*
 		 * ensures that the drawing plane does not exceed the bounds of this EditorPane
 		 */
 		widthProperty().addListener(e -> {fixLocation();});
@@ -165,6 +209,7 @@ public class EditorPane extends Pane {
 		super.layoutChildren();
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		paintBase(gc);
+		paintObjects(gc);
 		paintMouseLocation(gc);
 	}
 	/*
@@ -264,19 +309,25 @@ public class EditorPane extends Pane {
 		/*
 		 * translates back for next interation of render loop
 		 */
-		gc.translate(-shiftx, -shifty);
-		gc.translate(-margin, -margin);
+		gc.translate(- (shiftx + margin), - (shifty + margin));
 	}
 	/*
 	 * paints what the mouse is currently locked onto on the drawing plane
 	 */
 	private void paintMouseLocation(GraphicsContext gc) {
-		SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
 		if (mousevalid) {
 			gc.translate(shiftx + margin, shifty + margin);
 			gc.strokeOval(pxScale(snappoint.getX()) - 4, pxScale(snappoint.getY()) - 4, 8, 8);
 			gc.translate(- (shiftx + margin), - (shifty + margin));
 		}
+	}
+	/*
+	 * instructs the objectmanager render all visible objects in the current scale
+	 */
+	private void paintObjects(GraphicsContext gc) {
+		gc.translate(shiftx + margin, shifty + margin);
+		objectmanager.render(scale, gc);
+		gc.translate(- (shiftx + margin), - (shifty + margin));
 	}
 	/*
 	 * scales down to grid scale
@@ -289,5 +340,25 @@ public class EditorPane extends Pane {
 	 */
 	private double pxScale(double x) {
 		return scale * x;
+	}
+	/*
+	 * Sets the current tool function
+	 */
+	public void setFunction(Functions f) {
+		pointtracker.setFunction(f);
+	}
+	/*
+	 * undo last created object
+	 */
+	public void undo() {
+		objectmanager.undo();
+		layoutChildren();
+	}
+	/*
+	 * redo
+	 */
+	public void redo() {
+		objectmanager.redo();
+		layoutChildren();
 	}
 }

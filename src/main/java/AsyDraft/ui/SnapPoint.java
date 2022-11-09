@@ -7,8 +7,8 @@ public class SnapPoint {
 	 * description of point (eg. "midpoint", "endpoint", "center")
 	 * valid, if the point is a valid point
 	 */
-	private double x;
-	private double y;
+	private double x = Double.NaN;
+	private double y = Double.NaN;
 	private String description;
 	private boolean valid = false;
 	/*
@@ -56,5 +56,11 @@ public class SnapPoint {
 	 */
 	public double getY() {
 		return y;
+	}
+	/*
+	 * returns validity of this point
+	 */
+	public boolean isValid() {
+		return valid;
 	}
 }

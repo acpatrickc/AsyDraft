@@ -2,6 +2,7 @@ package AsyDraft.asyEditorObjects;
 
 import AsyDraft.asyObjects.AsyObject;
 import AsyDraft.ui.SnapPoint;
+import javafx.scene.canvas.GraphicsContext;
 
 public interface AsyEditorObject {
 	/*
@@ -11,7 +12,7 @@ public interface AsyEditorObject {
 	/*
 	 * draws this object on screen
 	 */
-	public void render();
+	public void render(double scale, GraphicsContext gc);
 	/*
 	 * returns an array of SnapPoints contained in this AsyEditorObject
 	 */
