@@ -1,5 +1,6 @@
 package AsyDraft.ui;
 
+import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
 import AsyDraft.ui.FunctionPointTracker.Functions;
 import AsyDraft.ui.IconManager.Icons;
 import javafx.event.ActionEvent;
@@ -169,6 +170,24 @@ public class MainPane extends BorderPane {
 		selectionmode.getItems().add("loop selection");
 		selectionmode.getItems().add("lock selection");
 		selectionmode.getSelectionModel().select("drop selection");
+		selectionmode.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				switch (selectionmode.getValue()) {
+				case "drop selection":
+					editor.setSelectionMode(FunctionSelectionMode.drop);
+					break;
+					
+				case "loop selection":
+					editor.setSelectionMode(FunctionSelectionMode.loop);
+					break;
+					
+				case "lock selection":
+					editor.setSelectionMode(FunctionSelectionMode.lock);
+					break;
+			}
+			}
+		});
 		/*
 		 * Drawing modes
 		 * snap - snaps to snappable points (lattice, midpoints, etc.)

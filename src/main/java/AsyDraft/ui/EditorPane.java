@@ -1,6 +1,7 @@
 package AsyDraft.ui;
 
 import AsyDraft.ui.FunctionPointTracker.Functions;
+import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -59,7 +60,7 @@ public class EditorPane extends Pane {
 	 * the SnapPointContainer for all snap points in this EditorPane
 	 * snappoint, the current point the mouse is snapped to
 	 */
-	private FunctionPointTracker pointtracker = new FunctionPointTracker();
+	private FunctionPointTracker pointtracker = new FunctionPointTracker(FunctionSelectionMode.drop);
 	private EditorObjectManager objectmanager = new EditorObjectManager();
 	private SnapPointContainer snapcontainer = new SnapPointContainer(true, objectmanager);
 	private SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
@@ -161,6 +162,17 @@ public class EditorPane extends Pane {
 			}
 		});
 		/*
+		 * updates drawing plane as mouse exits
+		 * prevents artifacts of preview shadows
+		 */
+		setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				snappoint = new SnapPoint();
+				layoutChildren();
+			}
+		});
+		/*
 		 * resizes drawing plane as scrolling occurs
 		 */
 		canvas.setOnScroll(new EventHandler<ScrollEvent>() {
@@ -211,6 +223,7 @@ public class EditorPane extends Pane {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		paintBase(gc);
 		paintObjects(gc);
+		paintPreviewShadow(gc);
 		paintMouseLocation(gc);
 	}
 	/*
@@ -317,8 +330,20 @@ public class EditorPane extends Pane {
 	 */
 	private void paintMouseLocation(GraphicsContext gc) {
 		if (mousevalid) {
+			gc.setStroke(Color.BLACK);
+			gc.setLineWidth(1);
 			gc.translate(shiftx + margin, shifty + margin);
 			gc.strokeOval(pxScale(snappoint.getX()) - 4, pxScale(snappoint.getY()) - 4, 8, 8);
+			gc.translate(- (shiftx + margin), - (shifty + margin));
+		}
+	}
+	/*
+	 * paints a preview of the current drawing function (if applicable)
+	 */
+	private void paintPreviewShadow(GraphicsContext gc) {
+		if (mousevalid) {
+			gc.translate(shiftx + margin, shifty + margin);
+			pointtracker.paintPreviewShadow(snappoint.getX(), snappoint.getY(), scale, gc);
 			gc.translate(- (shiftx + margin), - (shifty + margin));
 		}
 	}
@@ -361,5 +386,11 @@ public class EditorPane extends Pane {
 	public void redo() {
 		objectmanager.redo();
 		layoutChildren();
+	}
+	/*
+	 * sets selection mode for drawing functions
+	 */
+	public void setSelectionMode(FunctionSelectionMode m) {
+		pointtracker.setSelectionMode(m);
 	}
 }
