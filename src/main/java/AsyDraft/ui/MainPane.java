@@ -1,5 +1,6 @@
 package AsyDraft.ui;
 
+import AsyDraft.ui.EditorPane.Style;
 import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
 import AsyDraft.ui.FunctionPointTracker.Functions;
 import AsyDraft.ui.IconManager.Icons;
@@ -106,38 +107,59 @@ public class MainPane extends BorderPane {
 		 * initiates buttons used to toggle each function of this program
 		 */
 		undo = new ToolBarItem(Icons.undo, "", new EventHandler<ActionEvent>() {
-			
 			@Override
 			public void handle(ActionEvent event) {
 				editor.undo();
 			}
 		});
 		redo = new ToolBarItem(Icons.redo, "", new EventHandler<ActionEvent>() {
-			
 			@Override
 			public void handle(ActionEvent event) {
 				editor.redo();
 			}
 		});
 		mouse = new ToolBarItem(Icons.mouse, "", new EventHandler<ActionEvent>() {
-			
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.nofunction);
 			}
 		});
 		segment = new ToolBarItem(Icons.segment, "", new EventHandler<ActionEvent>() {
-			
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.segment);
 			}
 		});
-		arrow = new ToolBarItem(Icons.arrow, "", null);
-		reversearrow = new ToolBarItem(Icons.reversearrow, "", null);
-		midarrow = new ToolBarItem(Icons.midarrow, "", null);
-		doublearrow = new ToolBarItem(Icons.doublearrow, "", null);
-		point = new ToolBarItem(Icons.point, "", null);
+		arrow = new ToolBarItem(Icons.arrow, "", new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.endarrow);
+			}
+		});
+		reversearrow = new ToolBarItem(Icons.reversearrow, "", new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.beginarrow);
+			}
+		});
+		midarrow = new ToolBarItem(Icons.midarrow, "", new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.midarrow);
+			}
+		});
+		doublearrow = new ToolBarItem(Icons.doublearrow, "", new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.doublearrow);
+			}
+		});
+		point = new ToolBarItem(Icons.point, "", new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.dot);
+			}
+		});
 		circle = new ToolBarItem(Icons.circle, "", null);
 		label = new ToolBarItem(Icons.label, "", null);
 		center = new ToolBarItem(Icons.center, "", null);
@@ -158,6 +180,22 @@ public class MainPane extends BorderPane {
 		backgroundchoice.getItems().add("pegboard");
 		backgroundchoice.getItems().add("grid");
 		backgroundchoice.getItems().add("blank");
+		backgroundchoice.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				switch (backgroundchoice.getValue()) {
+					case "pegboard":
+						editor.setStyle(Style.pegboard);
+						break;
+					case "grid":
+						editor.setStyle(Style.grid);
+						break;
+					case "blank":
+						editor.setStyle(Style.blank);
+						break;
+				}
+			}
+		});
 		backgroundchoice.getSelectionModel().select("grid");
 		/*
 		 * mode of selection
@@ -174,18 +212,16 @@ public class MainPane extends BorderPane {
 			@Override
 			public void handle(ActionEvent event) {
 				switch (selectionmode.getValue()) {
-				case "drop selection":
-					editor.setSelectionMode(FunctionSelectionMode.drop);
-					break;
-					
-				case "loop selection":
-					editor.setSelectionMode(FunctionSelectionMode.loop);
-					break;
-					
-				case "lock selection":
-					editor.setSelectionMode(FunctionSelectionMode.lock);
-					break;
-			}
+					case "drop selection":
+						editor.setSelectionMode(FunctionSelectionMode.drop);
+						break;
+					case "loop selection":
+						editor.setSelectionMode(FunctionSelectionMode.loop);
+						break;
+					case "lock selection":
+						editor.setSelectionMode(FunctionSelectionMode.lock);
+						break;
+				}
 			}
 		});
 		/*
@@ -195,9 +231,21 @@ public class MainPane extends BorderPane {
 		drawmodegroup = new ToggleGroup();
 		snap = new RadioButton("snap mode");
 		snap.setToggleGroup(drawmodegroup);
+		snap.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setSnap(true);
+			}
+		});
 		snap.setSelected(true);
 		free = new RadioButton("free mode");
 		free.setToggleGroup(drawmodegroup);
+		free.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setSnap(false);
+			}
+		});
 		/*
 		 * adds toolbar items to toolbars
 		 * separators group items into semi-related categories

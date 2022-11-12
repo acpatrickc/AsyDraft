@@ -20,7 +20,7 @@ public class EditorPane extends Pane {
 		grid,
 		blank
 	}
-	private Style style = Style.pegboard;
+	private Style style = Style.grid;
 	/*
 	 * width, height dimensions of grid
 	 * scale, length of space between gridlines
@@ -227,13 +227,6 @@ public class EditorPane extends Pane {
 		paintMouseLocation(gc);
 	}
 	/*
-	 * sets style of the grid
-	 */
-	public void setStyle(Style style) {
-		this.style = style;
-		layoutChildren();
-	}
-	/*
 	 * centers the drawing plane
 	 */
 	public void center() {
@@ -392,5 +385,18 @@ public class EditorPane extends Pane {
 	 */
 	public void setSelectionMode(FunctionSelectionMode m) {
 		pointtracker.setSelectionMode(m);
+	}
+	/*
+	 * sets style of the grid
+	 */
+	public void setStyle(Style style) {
+		this.style = style;
+		layoutChildren();
+	}
+	/*
+	 * sets whether to snap to significant points or not
+	 */
+	public void setSnap(boolean snap) {
+		snapcontainer.setSnap(snap);
 	}
 }

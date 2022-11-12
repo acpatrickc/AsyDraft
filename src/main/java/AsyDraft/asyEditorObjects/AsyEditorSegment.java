@@ -9,21 +9,23 @@ import javafx.scene.paint.Color;
 
 public class AsyEditorSegment implements AsyEditorObject {
 	/*
-	 * start and end coordinates (on screen)
+	 * start and end coordinates (on grid)
+	 * snappoints, significant points where the editor can snap to
 	 */
-	private double startx;
-	private double starty;
-	private double endx;
-	private double endy;
-	private SnapPoint[] snappoints = new SnapPoint[3];
+	protected double startx;
+	protected double starty;
+	protected double endx;
+	protected double endy;
+	protected SnapPoint[] snappoints = new SnapPoint[3];
 	/*
 	 * initiates an AsyEditorSegment and indentifies significant points that can be snapped onto
+	 * start and end coordinates in array as {x, y}
 	 */
-	public AsyEditorSegment(double x0, double y0, double x1, double y1) {
-		startx = x0;
-		starty = y0;
-		endx = x1;
-		endy = y1;
+	public AsyEditorSegment(double[] start, double[] end) {
+		startx = start[0];
+		starty = start[1];
+		endx = end[0];
+		endy = end[1];
 		snappoints[0] = new SnapPoint(startx, starty, "endpoint");
 		snappoints[1] = new SnapPoint(endx, endy, "endpoint");
 		snappoints[2] = new SnapPoint((startx + endx) / 2, (starty + endy) / 2, "midpoint");

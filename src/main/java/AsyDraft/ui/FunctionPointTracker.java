@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
 
+import AsyDraft.asyEditorObjects.AsyEditorBeginArrow;
+import AsyDraft.asyEditorObjects.AsyEditorDot;
+import AsyDraft.asyEditorObjects.AsyEditorDoubleArrow;
+import AsyDraft.asyEditorObjects.AsyEditorEndArrow;
+import AsyDraft.asyEditorObjects.AsyEditorMidArrow;
 import AsyDraft.asyEditorObjects.AsyEditorObject;
 import AsyDraft.asyEditorObjects.AsyEditorSegment;
 import AsyDraft.asyObjects.AsySegment;
@@ -23,7 +28,7 @@ public class FunctionPointTracker {
 		beginarrow,
 		midarrow,
 		doublearrow,
-		point,
+		dot,
 		circle,
 		incircle,
 		circumcircle
@@ -65,6 +70,7 @@ public class FunctionPointTracker {
 		requiredpoints.put(Functions.beginarrow, 2);
 		requiredpoints.put(Functions.midarrow, 2);
 		requiredpoints.put(Functions.doublearrow, 2);
+		requiredpoints.put(Functions.dot, 1);
 		requiredpoints.put(Functions.circle, 2);
 		requiredpoints.put(Functions.incircle, 3);
 		requiredpoints.put(Functions.circumcircle, 3);
@@ -83,6 +89,10 @@ public class FunctionPointTracker {
 	 */
 	public void feedPoint(double x, double y) {
 		if (!currentfunction.equals(Functions.nofunction)) {
+			/*
+			 * makes sure the same point is not selected consecutively
+			 */
+			if (!points.isEmpty() && points.peekLast()[0] == x && points.peekLast()[1] == y) return;
 			points.add(new double[] {x , y});
 			pointcount ++;
 			if (pointcount == requiredpoints.get(currentfunction)) {
@@ -93,17 +103,19 @@ public class FunctionPointTracker {
 				double[] firstpoint = points.peekFirst();
 				switch (currentfunction) {
 					case segment:
-						double[] p = points.remove();
-						double[] p1 = points.remove();
-						waitlist.add(new AsyEditorSegment(p[0], p[1], p1[0], p1[1]));
+						waitlist.add(new AsyEditorSegment(points.remove(), points.remove()));
 						break;
 					case beginarrow:
+						waitlist.add(new AsyEditorBeginArrow(points.remove(), points.remove()));
 						break;
 					case endarrow:
+						waitlist.add(new AsyEditorEndArrow(points.remove(), points.remove()));
 						break;
 					case doublearrow:
+						waitlist.add(new AsyEditorDoubleArrow(points.remove(), points.remove()));
 						break;
 					case midarrow:
+						waitlist.add(new AsyEditorMidArrow(points.remove(), points.remove()));
 						break;
 					case circle:
 						break;
@@ -111,7 +123,8 @@ public class FunctionPointTracker {
 						break;
 					case incircle:
 						break;
-					case point:
+					case dot:
+						waitlist.add(new AsyEditorDot(points.remove()));
 						break;
 					case nofunction:
 						break;
@@ -170,17 +183,24 @@ public class FunctionPointTracker {
 		if (!currentfunction.equals(Functions.nofunction) && pointcount == requiredpoints.get(currentfunction) - 1) {
 			switch (currentfunction) {
 				case segment:
-					double[] p = points.peek();
 					gc.setStroke(validshadowcolor);
-					gc.strokeLine(p[0] * scale, p[1] * scale, x * scale, y * scale);
+					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
 					break;
 				case beginarrow:
+					gc.setStroke(validshadowcolor);
+					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
 					break;
 				case endarrow:
+					gc.setStroke(validshadowcolor);
+					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
 					break;
 				case doublearrow:
+					gc.setStroke(validshadowcolor);
+					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
 					break;
 				case midarrow:
+					gc.setStroke(validshadowcolor);
+					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
 					break;
 				case circle:
 					break;
@@ -188,7 +208,10 @@ public class FunctionPointTracker {
 					break;
 				case incircle:
 					break;
-				case point:
+					/*
+					 * no previews
+					 */
+				case dot:
 					break;
 				case nofunction:
 					break;
