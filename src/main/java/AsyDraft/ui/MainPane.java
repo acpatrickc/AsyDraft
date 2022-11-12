@@ -1,9 +1,13 @@
 package AsyDraft.ui;
 
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+
 import AsyDraft.ui.EditorPane.Style;
 import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
 import AsyDraft.ui.FunctionPointTracker.Functions;
 import AsyDraft.ui.IconManager.Icons;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Accordion;
@@ -28,81 +32,85 @@ public class MainPane extends BorderPane {
 	/*
 	 * draw function buttons
 	 */
-	ToolBarItem undo;
-	ToolBarItem redo;
-	ToolBarItem mouse;
-	ToolBarItem segment;
-	ToolBarItem arrow;
-	ToolBarItem reversearrow;
-	ToolBarItem midarrow;
-	ToolBarItem doublearrow;
-	ToolBarItem circle;
-	ToolBarItem incircle;
-	ToolBarItem circumcircle;
-	ToolBarItem tangent;
-	ToolBarItem parallel;
-	ToolBarItem perpendicular;
-	ToolBarItem rightangle;
-	ToolBarItem point;
-	ToolBarItem anglebisector;
-	ToolBarItem congruentangle;
-	ToolBarItem congruentsegment;
-	ToolBarItem congruentarc;
-	ToolBarItem label;
-	ToolBarItem center;
+	private ToolBarItem undo;
+	private ToolBarItem redo;
+	private ToolBarItem mouse;
+	private ToolBarItem segment;
+	private ToolBarItem arrow;
+	private ToolBarItem reversearrow;
+	private ToolBarItem midarrow;
+	private ToolBarItem doublearrow;
+	private ToolBarItem circle;
+	private ToolBarItem incircle;
+	private ToolBarItem circumcircle;
+	private ToolBarItem tangent;
+	private ToolBarItem parallel;
+	private ToolBarItem perpendicular;
+	private ToolBarItem rightangle;
+	private ToolBarItem point;
+	private ToolBarItem anglebisector;
+	private ToolBarItem congruentangle;
+	private ToolBarItem congruentsegment;
+	private ToolBarItem congruentarc;
+	private ToolBarItem label;
+	private ToolBarItem center;
 	/*
 	 * choice of background and mode of selection
 	 */
-	ComboBox<String> backgroundchoice;
-	ComboBox<String> selectionmode;
+	private ComboBox<String> backgroundchoice;
+	private ComboBox<String> selectionmode;
 	/*
 	 * drawing mode selection
 	 */
-	ToggleGroup drawmodegroup;
-	RadioButton snap;
-	RadioButton free;
+	private ToggleGroup drawmodegroup;
+	private RadioButton snap;
+	private RadioButton free;
 	/*
 	 * two toolbars
 	 */
-	VBox toolmenubars;
-	ToolBar settingstoolbar;
-	ToolBar drawingtoolbar;
+	private VBox toolmenubars;
+	private ToolBar settingstoolbar;
+	private ToolBar drawingtoolbar;
 	/*
 	 * top menu bar
 	 */
-	MenuBar menu;
+	private MenuBar menu;
 	/*
 	 * result area, where final asymptote code shows
 	 * editor pane and pane that splits 
 	 */
-	TextArea resultarea;
-	EditorPane editor;
-	SplitPane splitpane;
+	private CodeArea resultarea;
+	private EditorPane editor;
+	private SplitPane splitpane;
 	/*
 	 * tabs which display drawn objects and settings
 	 * area which drawn objects will be listed
 	 * Hierarchy:
 	 * TabPane -> Tab -> Accordion -> TitledPane
 	 */
-	TabPane lefttabs;
-	Tab componentstab;
-	Tab congruencetab;
-	Tab snaptab;
-	Tab appearancetab;
-	Accordion componentsaccordion;
-	Accordion congruences;
-	Accordion labels;
-	TitledPane linepane;
-	TitledPane pointpane;
-	TitledPane circlepane;
-	TitledPane labelpane;
-	TitledPane anglecongruences;
-	TitledPane segmentcongruences;
-	TitledPane arccongruences;
-	TitledPane pointlabels;
-	TitledPane segmentlabels;
+	private TabPane lefttabs;
+	private Tab componentstab;
+	private Tab congruencetab;
+	private Tab snaptab;
+	private Tab appearancetab;
+	private Accordion componentsaccordion;
+	private Accordion congruences;
+	private Accordion labels;
+	private TitledPane linepane;
+	private TitledPane pointpane;
+	private TitledPane circlepane;
+	private TitledPane labelpane;
+	private TitledPane anglecongruences;
+	private TitledPane segmentcongruences;
+	private TitledPane arccongruences;
+	private TitledPane pointlabels;
+	private TitledPane segmentlabels;
 	
 	public MainPane() {
+		/*
+		 * the editor pane, where all drawing is done
+		 */
+		editor = new EditorPane(10, 10, 50);
 		/*
 		 * initiates buttons used to toggle each function of this program
 		 */
@@ -161,8 +169,18 @@ public class MainPane extends BorderPane {
 			}
 		});
 		circle = new ToolBarItem(Icons.circle, "", null);
-		label = new ToolBarItem(Icons.label, "", null);
-		center = new ToolBarItem(Icons.center, "", null);
+		label = new ToolBarItem(Icons.label, "", new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.label);
+			}
+		});
+		center = new ToolBarItem(Icons.center, "", new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.center();
+			}
+		});
 		incircle = new ToolBarItem(Icons.incircle, "", null);
 		circumcircle = new ToolBarItem(Icons.circumcircle, "", null);
 		tangent = new ToolBarItem(Icons.tangent, "", null);
@@ -251,7 +269,9 @@ public class MainPane extends BorderPane {
 		 * separators group items into semi-related categories
 		 */
 		settingstoolbar = new ToolBar(undo, redo, new Separator()
-			, backgroundchoice, selectionmode, snap, free, new Separator());
+			, backgroundchoice, selectionmode, snap, free, new Separator()
+			, editor.getLabelSettings(), new Separator()
+			, center);
 		settingstoolbar.getStyleClass().add("settingstoolbar");
 		drawingtoolbar = new ToolBar(mouse, new Separator()
 			, segment, arrow, reversearrow, midarrow, doublearrow, new Separator()
@@ -264,13 +284,14 @@ public class MainPane extends BorderPane {
 		drawingtoolbar.getStyleClass().add("drawingtoolbar");
 		/*
 		 * menu bar, file open etc...
-		 * editor, result instantiated and included in splitpane
 		 */
 		menu = new MenuBar(new Menu("File"), new Menu("Edit"), new Menu("Help"));
 		toolmenubars = new VBox(menu, settingstoolbar, drawingtoolbar);
-		resultarea = new TextArea();
-		editor = new EditorPane(10, 10, 50);
+		resultarea = new CodeArea();
+		resultarea.setParagraphGraphicFactory(LineNumberFactory.get(resultarea));
+		resultarea.setWrapText(true);
 		splitpane = new SplitPane(editor, resultarea);
+		splitpane.setDividerPositions(0.6);
 		/*
 		 * tabs and display / list area for drawn objects
 		 */
@@ -309,5 +330,14 @@ public class MainPane extends BorderPane {
 		toolmenubars.getStylesheets().add("toolbar.css");
 		lefttabs.getStylesheets().add("tabs.css");
 		splitpane.getStylesheets().add("splitpane.css");
+		/*
+		 * centers the editor after initializing
+		 */
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				editor.center();
+			}
+		});
 	}
 }

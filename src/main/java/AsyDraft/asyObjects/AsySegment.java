@@ -4,10 +4,10 @@ public class AsySegment implements AsyObject {
 	/*
 	 * start and end coordinates
 	 */
-	private double startx;
-	private double starty;
-	private double endx;
-	private double endy;
+	protected double startx;
+	protected double starty;
+	protected double endx;
+	protected double endy;
 	/*
 	 * instantiates an AsySegment with start and end coordinates
 	 */

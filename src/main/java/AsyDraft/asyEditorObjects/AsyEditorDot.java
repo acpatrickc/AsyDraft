@@ -12,8 +12,8 @@ public class AsyEditorDot implements AsyEditorObject {
 	/*
 	 * coordinates (on grid)
 	 */
-	protected double x;
-	protected double y;
+	private double x;
+	private double y;
 	/*
 	 * initiates an AsyEditorDot
 	 * position as array {x, y}

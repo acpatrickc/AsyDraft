@@ -1,7 +1,11 @@
 package AsyDraft.ui;
 
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Init extends Application {
@@ -16,8 +20,11 @@ public class Init extends Application {
     }
     /*
      * main method
+     * loads JLatexMath, as it seems slow to start during drawing
      */
     public static void main(String[] args) {
+    	TeXFormula.setDPITarget(120);
+		new TeXFormula("test").createTeXIcon(TeXConstants.STYLE_DISPLAY, 12);
         launch();
     }
 

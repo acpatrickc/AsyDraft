@@ -8,10 +8,12 @@ import AsyDraft.asyEditorObjects.AsyEditorBeginArrow;
 import AsyDraft.asyEditorObjects.AsyEditorDot;
 import AsyDraft.asyEditorObjects.AsyEditorDoubleArrow;
 import AsyDraft.asyEditorObjects.AsyEditorEndArrow;
+import AsyDraft.asyEditorObjects.AsyEditorLabel;
 import AsyDraft.asyEditorObjects.AsyEditorMidArrow;
 import AsyDraft.asyEditorObjects.AsyEditorObject;
 import AsyDraft.asyEditorObjects.AsyEditorSegment;
 import AsyDraft.asyObjects.AsySegment;
+import AsyDraft.asyObjects.AsyLabel.Direction;
 import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -29,6 +31,7 @@ public class FunctionPointTracker {
 		midarrow,
 		doublearrow,
 		dot,
+		label,
 		circle,
 		incircle,
 		circumcircle
@@ -71,6 +74,7 @@ public class FunctionPointTracker {
 		requiredpoints.put(Functions.midarrow, 2);
 		requiredpoints.put(Functions.doublearrow, 2);
 		requiredpoints.put(Functions.dot, 1);
+		requiredpoints.put(Functions.label, 2);
 		requiredpoints.put(Functions.circle, 2);
 		requiredpoints.put(Functions.incircle, 3);
 		requiredpoints.put(Functions.circumcircle, 3);
@@ -87,7 +91,7 @@ public class FunctionPointTracker {
 	 * consumes a point and adds it to the points needed by the current object
 	 * if the number of points required for a function is fulfilled, the object(s) in this function is/are added to the waitlist
 	 */
-	public void feedPoint(double x, double y) {
+	public void feedPoint(double x, double y, double scale, String labeltex) {
 		if (!currentfunction.equals(Functions.nofunction)) {
 			/*
 			 * makes sure the same point is not selected consecutively
@@ -116,6 +120,9 @@ public class FunctionPointTracker {
 						break;
 					case midarrow:
 						waitlist.add(new AsyEditorMidArrow(points.remove(), points.remove()));
+						break;
+					case label:
+						waitlist.add(new AsyEditorLabel(points.remove(), points.remove(), scale, labeltex));
 						break;
 					case circle:
 						break;
@@ -175,7 +182,7 @@ public class FunctionPointTracker {
 	 * paints the preview shadow of the current object if possible
 	 * only occurs when last point of an function is being selected
 	 */
-	public void paintPreviewShadow(double x, double y, double scale, GraphicsContext gc) {
+	public void paintPreviewShadow(double x, double y, double scale, GraphicsContext gc, String labeltex) {
 		Color validshadowcolor = new Color(0, 0.2, 0.8, 0.3);
 		Color invalidshadowcolor = new Color(0.8, 0, 0, 0.3);
 		gc.setLineWidth(4);
@@ -201,6 +208,11 @@ public class FunctionPointTracker {
 				case midarrow:
 					gc.setStroke(validshadowcolor);
 					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
+					break;
+				case label:
+					gc.setFill(validshadowcolor);
+					gc.fillOval(points.peek()[0] * scale - 3, points.peek()[1] * scale - 3, 6, 6);
+					new AsyEditorLabel(points.peek(), new double[] {x, y}, scale, labeltex).render(scale, gc);
 					break;
 				case circle:
 					break;
