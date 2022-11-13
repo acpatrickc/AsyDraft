@@ -201,7 +201,7 @@ public class EditorPane extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				if (!isdragging) {
-					pointtracker.feedPoint(snappoint.getX(), snappoint.getY(), scale);
+					pointtracker.feedPoint(snappoint.getX(), snappoint.getY(), scale, width, height);
 					while (!pointtracker.waitlistEmpty()) {
 						objectmanager.addEditorObject(pointtracker.takeEditorObject());
 					}
@@ -337,7 +337,7 @@ public class EditorPane extends Pane {
 	private void paintPreviewShadow(GraphicsContext gc) {
 		if (mousevalid) {
 			gc.translate(shiftx + margin, shifty + margin);
-			pointtracker.paintPreviewShadow(snappoint.getX(), snappoint.getY(), scale, gc);
+			pointtracker.paintPreviewShadow(snappoint.getX(), snappoint.getY(), scale, width, height, gc);
 			gc.translate(- (shiftx + margin), - (shifty + margin));
 		}
 	}
