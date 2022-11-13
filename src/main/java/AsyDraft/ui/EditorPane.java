@@ -1,23 +1,16 @@
 package AsyDraft.ui;
 
-import AsyDraft.ui.FunctionPointTracker.Functions;
-import AsyDraft.asyEditorObjects.AsyEditorLabel;
-import AsyDraft.asyEditorObjects.AsyEditorObject;
 import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
+import AsyDraft.ui.FunctionPointTracker.Functions;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.util.StringConverter;
 
 public class EditorPane extends Pane {
 	/*
@@ -74,15 +67,8 @@ public class EditorPane extends Pane {
 	private SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
 	/*
 	 * canvas, the JavaFX object that the editor is drawn onto
-	 * labelletter, the alphanumberical representation of the current letter
-	 * labelletterspinner, displays labelletter
-	 * labelmode, custom or alphabetical
 	 */
 	private Canvas canvas = new Canvas();
-	private Spinner<Integer> labelletterspinner;
-	private ComboBox<String> labelmode;
-	private HBox labelsettings;
-	private TextField labeltext;
 	
 	public EditorPane(int w, int h, int s) {
 		width = w;
@@ -215,14 +201,9 @@ public class EditorPane extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				if (!isdragging) {
-					pointtracker.feedPoint(snappoint.getX(), snappoint.getY(), scale, getLabelTeX());
+					pointtracker.feedPoint(snappoint.getX(), snappoint.getY(), scale);
 					while (!pointtracker.waitlistEmpty()) {
-						AsyEditorObject eo = pointtracker.takeEditorObject();
-						/*
-						 * if an AsyEditorLabel is created, and the label mode is alphabetical, the label index increases by 1
-						 */
-						if (eo.getClass().equals(AsyEditorLabel.class) && labelmode.getValue().equals("alphabetical")) labelletterspinner.getValueFactory().setValue(labelletterspinner.getValue() + 1);
-						objectmanager.addEditorObject(eo);
+						objectmanager.addEditorObject(pointtracker.takeEditorObject());
 					}
 				}
 				layoutChildren();
@@ -233,64 +214,6 @@ public class EditorPane extends Pane {
 		 */
 		widthProperty().addListener(e -> {fixLocation();});
 		heightProperty().addListener(e -> {fixLocation();});
-		/*
-		 * label letter spinner which increments alphabetically
-		 */
-		labelletterspinner = new Spinner<>(1, 17576, 2);
-		labelletterspinner.setEditable(true);
-		labelletterspinner.setPrefWidth(140);
-		labelletterspinner.getValueFactory().setConverter(new StringConverter<Integer>() {
-			@Override
-			public String toString(Integer i) {
-				return MathUtils.toAlphabet(i);
-			}
-			@Override
-			public Integer fromString(String s) {
-				char[] letters = s.toUpperCase().toCharArray();
-				int i = letters.length - 1;
-				int value = 0;
-				/*
-				 * A=1 B=2 etc.
-				 * converts to base 10
-				 */
-				for (char c : letters) {
-					value += (((int) c) - 64) * Math.pow(26, i);
-					i--;
-				}
-				return value;
-			}
-			
-		});
-		labelletterspinner.getValueFactory().setValue(1);
-		/*
-		 * mode of label, either alphabetical or custom tex
-		 */
-		labelmode = new ComboBox<>();
-		labelmode.getItems().add("alphabetical");
-		labelmode.getItems().add("custom");
-		labelmode.getSelectionModel().select("alphabetical");
-		/*
-		 * switches modes
-		 */
-		labelmode.valueProperty().addListener(e -> {
-			switch (labelmode.getValue()) {
-				case "alphabetical":
-					labelsettings.getChildren().remove(labeltext);
-					labelsettings.getChildren().add(labelletterspinner);
-					break;
-				
-				case "custom":
-					labelsettings.getChildren().remove(labelletterspinner);
-					labelsettings.getChildren().add(labeltext);
-					break;
-			}
-		});
-		/*
-		 * custom text input for labels, and hbox to put labelmode and labelletterspinner side by side
-		 */
-		labeltext = new TextField();
-		labeltext.setPrefWidth(140);
-		labelsettings = new HBox(labelmode, labelletterspinner);
 	}
 	/*
 	 * paints the grid and background and elements on the canvas
@@ -401,8 +324,8 @@ public class EditorPane extends Pane {
 	 */
 	private void paintMouseLocation(GraphicsContext gc) {
 		if (mousevalid) {
-			gc.setStroke(Color.BLACK);
-			gc.setLineWidth(1);
+			gc.setStroke(Color.GREEN);
+			gc.setLineWidth(1.5);
 			gc.translate(shiftx + margin, shifty + margin);
 			gc.strokeOval(pxScale(snappoint.getX()) - 4, pxScale(snappoint.getY()) - 4, 8, 8);
 			gc.translate(- (shiftx + margin), - (shifty + margin));
@@ -414,7 +337,7 @@ public class EditorPane extends Pane {
 	private void paintPreviewShadow(GraphicsContext gc) {
 		if (mousevalid) {
 			gc.translate(shiftx + margin, shifty + margin);
-			pointtracker.paintPreviewShadow(snappoint.getX(), snappoint.getY(), scale, gc, getLabelTeX());
+			pointtracker.paintPreviewShadow(snappoint.getX(), snappoint.getY(), scale, gc);
 			gc.translate(- (shiftx + margin), - (shifty + margin));
 		}
 	}
@@ -437,12 +360,6 @@ public class EditorPane extends Pane {
 	 */
 	private double pxScale(double x) {
 		return scale * x;
-	}
-	/*
-	 * returns the tex string for the label
-	 */
-	private String getLabelTeX() {
-		return labelmode.getValue().equals("custom") ? labeltext.getText() : MathUtils.toAlphabet(labelletterspinner.getValue());
 	}
 	/*
 	 * Sets the current tool function
@@ -487,6 +404,6 @@ public class EditorPane extends Pane {
 	 * returns the label settings box
 	 */
 	public HBox getLabelSettings() {
-		return labelsettings;
+		return pointtracker.getLabelSettings();
 	}
 }

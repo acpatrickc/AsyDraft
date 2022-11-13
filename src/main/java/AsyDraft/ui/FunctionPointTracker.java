@@ -2,9 +2,9 @@ package AsyDraft.ui;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Objects;
 
 import AsyDraft.asyEditorObjects.AsyEditorBeginArrow;
+import AsyDraft.asyEditorObjects.AsyEditorCircle;
 import AsyDraft.asyEditorObjects.AsyEditorDot;
 import AsyDraft.asyEditorObjects.AsyEditorDoubleArrow;
 import AsyDraft.asyEditorObjects.AsyEditorEndArrow;
@@ -12,12 +12,13 @@ import AsyDraft.asyEditorObjects.AsyEditorLabel;
 import AsyDraft.asyEditorObjects.AsyEditorMidArrow;
 import AsyDraft.asyEditorObjects.AsyEditorObject;
 import AsyDraft.asyEditorObjects.AsyEditorSegment;
-import AsyDraft.asyObjects.AsySegment;
-import AsyDraft.asyObjects.AsyLabel.Direction;
-import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.StrokeLineCap;
+import javafx.util.StringConverter;
 
 public class FunctionPointTracker {
 	/*
@@ -64,6 +65,16 @@ public class FunctionPointTracker {
 	private int pointcount;
 	private LinkedList<AsyEditorObject> waitlist = new LinkedList<>();
 	/*
+	 * labelletter, the alphanumberical representation of the current letter
+	 * labelletterspinner, displays labelletter
+	 * labelmode, custom or alphabetical
+	 * labeltext, for inputting custom labels
+	 */
+	private Spinner<Integer> labelletterspinner;
+	private ComboBox<String> labelmode;
+	private HBox labelsettings;
+	private TextField labeltext;
+	/*
 	 * contstructor: maps functions to required points
 	 */
 	public FunctionPointTracker(FunctionSelectionMode m) {
@@ -78,6 +89,64 @@ public class FunctionPointTracker {
 		requiredpoints.put(Functions.circle, 2);
 		requiredpoints.put(Functions.incircle, 3);
 		requiredpoints.put(Functions.circumcircle, 3);
+		/*
+		 * label letter spinner which increments alphabetically
+		 */
+		labelletterspinner = new Spinner<>(1, 17576, 2);
+		labelletterspinner.setEditable(true);
+		labelletterspinner.setPrefWidth(140);
+		labelletterspinner.getValueFactory().setConverter(new StringConverter<Integer>() {
+			@Override
+			public String toString(Integer i) {
+				return MathUtils.toAlphabet(i);
+			}
+			@Override
+			public Integer fromString(String s) {
+				char[] letters = s.toUpperCase().toCharArray();
+				int i = letters.length - 1;
+				int value = 0;
+				/*
+				 * A=1 B=2 etc.
+				 * converts to base 10
+				 */
+				for (char c : letters) {
+					value += (((int) c) - 64) * Math.pow(26, i);
+					i--;
+				}
+				return value;
+			}
+			
+		});
+		labelletterspinner.getValueFactory().setValue(1);
+		/*
+		 * mode of label, either alphabetical or custom tex
+		 */
+		labelmode = new ComboBox<>();
+		labelmode.getItems().add("alphabetical");
+		labelmode.getItems().add("custom");
+		labelmode.getSelectionModel().select("alphabetical");
+		/*
+		 * switches modes
+		 */
+		labelmode.valueProperty().addListener(e -> {
+			switch (labelmode.getValue()) {
+				case "alphabetical":
+					labelsettings.getChildren().remove(labeltext);
+					labelsettings.getChildren().add(labelletterspinner);
+					break;
+				
+				case "custom":
+					labelsettings.getChildren().remove(labelletterspinner);
+					labelsettings.getChildren().add(labeltext);
+					break;
+			}
+		});
+		/*
+		 * custom text input for labels, and hbox to put labelmode and labelletterspinner side by side
+		 */
+		labeltext = new TextField();
+		labeltext.setPrefWidth(140);
+		labelsettings = new HBox(labelmode, labelletterspinner);
 	}
 	/*
 	 * sets focused function
@@ -89,14 +158,15 @@ public class FunctionPointTracker {
 	}
 	/*
 	 * consumes a point and adds it to the points needed by the current object
+	 * accepts LaTeX, in case the function requires text
 	 * if the number of points required for a function is fulfilled, the object(s) in this function is/are added to the waitlist
 	 */
-	public void feedPoint(double x, double y, double scale, String labeltex) {
+	public void feedPoint(double x, double y, double scale) {
 		if (!currentfunction.equals(Functions.nofunction)) {
 			/*
-			 * makes sure the same point is not selected consecutively
+			 * makes sure the same point is not selected consecutively, unless a label
 			 */
-			if (!points.isEmpty() && points.peekLast()[0] == x && points.peekLast()[1] == y) return;
+			if (!points.isEmpty() && points.peekLast()[0] == x && points.peekLast()[1] == y && !currentfunction.equals(Functions.label)) return;
 			points.add(new double[] {x , y});
 			pointcount ++;
 			if (pointcount == requiredpoints.get(currentfunction)) {
@@ -122,9 +192,11 @@ public class FunctionPointTracker {
 						waitlist.add(new AsyEditorMidArrow(points.remove(), points.remove()));
 						break;
 					case label:
-						waitlist.add(new AsyEditorLabel(points.remove(), points.remove(), scale, labeltex));
+						waitlist.add(new AsyEditorLabel(points.remove(), points.remove(), scale, getLabelTeX()));
+						labelletterspinner.getValueFactory().increment(1);
 						break;
 					case circle:
+						waitlist.add(new AsyEditorCircle(points.remove(), points.remove()));
 						break;
 					case circumcircle:
 						break;
@@ -161,6 +233,52 @@ public class FunctionPointTracker {
 		}
 	}
 	/*
+	 * paints the preview shadow of the current object if possible
+	 * only occurs when last point of an function is being selected
+	 */
+	public void paintPreviewShadow(double x, double y, double scale, GraphicsContext gc) {
+		Color validshadowcolor = new Color(0, 0.2, 0.8, 0.3);
+		Color invalidshadowcolor = new Color(0.8, 0, 0, 0.3);
+		if (!currentfunction.equals(Functions.nofunction) && pointcount == requiredpoints.get(currentfunction) - 1) {
+			switch (currentfunction) {
+				case segment:
+					AsyEditorSegment.drawPreview(scale, gc, points.peek(), new double[] {x, y}, validshadowcolor);
+					break;
+				case beginarrow:
+					AsyEditorBeginArrow.drawPreview(scale, gc, points.peek(), new double[] {x, y}, validshadowcolor);
+					break;
+				case endarrow:
+					AsyEditorEndArrow.drawPreview(scale, gc, points.peek(), new double[] {x, y}, validshadowcolor);
+					break;
+				case doublearrow:
+					AsyEditorDoubleArrow.drawPreview(scale, gc, points.peek(), new double[] {x, y}, validshadowcolor);
+					break;
+				case midarrow:
+					AsyEditorMidArrow.drawPreview(scale, gc, points.peek(), new double[] {x, y}, validshadowcolor);
+					break;
+				case label:
+					AsyEditorLabel.drawPreview(points.peek(), new double[] {x, y}, scale, getLabelTeX(), gc, validshadowcolor);
+					break;
+				case circle:
+					AsyEditorCircle.drawPreview(scale, gc, points.peek(), new double[] {x, y}, validshadowcolor);
+					break;
+				case circumcircle:
+					break;
+				case incircle:
+					break;
+					/*
+					 * no previews
+					 */
+				case dot:
+					break;
+				case nofunction:
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	/*
 	 * sets selection mode for drawing functions
 	 */
 	public void setSelectionMode(FunctionSelectionMode m) {
@@ -179,57 +297,15 @@ public class FunctionPointTracker {
 		return waitlist.isEmpty();
 	}
 	/*
-	 * paints the preview shadow of the current object if possible
-	 * only occurs when last point of an function is being selected
+	 * returns the label settings box
 	 */
-	public void paintPreviewShadow(double x, double y, double scale, GraphicsContext gc, String labeltex) {
-		Color validshadowcolor = new Color(0, 0.2, 0.8, 0.3);
-		Color invalidshadowcolor = new Color(0.8, 0, 0, 0.3);
-		gc.setLineWidth(4);
-		gc.setLineCap(StrokeLineCap.ROUND);
-		if (!currentfunction.equals(Functions.nofunction) && pointcount == requiredpoints.get(currentfunction) - 1) {
-			switch (currentfunction) {
-				case segment:
-					gc.setStroke(validshadowcolor);
-					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
-					break;
-				case beginarrow:
-					gc.setStroke(validshadowcolor);
-					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
-					break;
-				case endarrow:
-					gc.setStroke(validshadowcolor);
-					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
-					break;
-				case doublearrow:
-					gc.setStroke(validshadowcolor);
-					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
-					break;
-				case midarrow:
-					gc.setStroke(validshadowcolor);
-					gc.strokeLine(points.peek()[0] * scale, points.peek()[1] * scale, x * scale, y * scale);
-					break;
-				case label:
-					gc.setFill(validshadowcolor);
-					gc.fillOval(points.peek()[0] * scale - 3, points.peek()[1] * scale - 3, 6, 6);
-					new AsyEditorLabel(points.peek(), new double[] {x, y}, scale, labeltex).render(scale, gc);
-					break;
-				case circle:
-					break;
-				case circumcircle:
-					break;
-				case incircle:
-					break;
-					/*
-					 * no previews
-					 */
-				case dot:
-					break;
-				case nofunction:
-					break;
-				default:
-					break;
-			}
-		}
+	public HBox getLabelSettings() {
+		return labelsettings;
+	}
+	/*
+	 * returns the tex string for the label
+	 */
+	private String getLabelTeX() {
+		return labelmode.getValue().equals("custom") ? labeltext.getText() : MathUtils.toAlphabet(labelletterspinner.getValue());
 	}
 }

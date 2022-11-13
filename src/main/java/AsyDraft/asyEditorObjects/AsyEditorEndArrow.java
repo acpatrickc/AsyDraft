@@ -2,9 +2,7 @@ package AsyDraft.asyEditorObjects;
 
 import AsyDraft.asyObjects.AsyEndArrow;
 import AsyDraft.asyObjects.AsyObject;
-import AsyDraft.asyObjects.AsySegment;
 import AsyDraft.ui.MathUtils;
-import AsyDraft.ui.SnapPoint;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

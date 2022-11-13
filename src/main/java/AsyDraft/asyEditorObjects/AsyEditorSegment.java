@@ -6,6 +6,7 @@ import AsyDraft.ui.MathUtils;
 import AsyDraft.ui.SnapPoint;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
 
 public class AsyEditorSegment implements AsyEditorObject {
 	/*
@@ -53,5 +54,14 @@ public class AsyEditorSegment implements AsyEditorObject {
 	public SnapPoint[] getSnapPoints() {
 		return snappoints;
 	}
-
+	/*
+	 * draws a preview shadow of the segment
+	 * static
+	 */
+	public static void drawPreview(double scale, GraphicsContext gc, double[] start, double[] end, Color c) {
+		gc.setLineWidth(3);
+		gc.setLineCap(StrokeLineCap.ROUND);
+		gc.setStroke(c);
+		gc.strokeLine(start[0] * scale, start[1] * scale, end[0] * scale, end[1] * scale);
+	}
 }

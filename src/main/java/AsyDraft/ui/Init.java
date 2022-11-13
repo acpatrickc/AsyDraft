@@ -5,7 +5,6 @@ import org.scilab.forge.jlatexmath.TeXFormula;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Init extends Application {

@@ -19,11 +19,10 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -168,7 +167,12 @@ public class MainPane extends BorderPane {
 				editor.setFunction(Functions.dot);
 			}
 		});
-		circle = new ToolBarItem(Icons.circle, "", null);
+		circle = new ToolBarItem(Icons.circle, "", new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editor.setFunction(Functions.circle);
+			}
+		});
 		label = new ToolBarItem(Icons.label, "", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {

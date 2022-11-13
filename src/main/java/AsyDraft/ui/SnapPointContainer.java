@@ -1,8 +1,5 @@
 package AsyDraft.ui;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import AsyDraft.asyEditorObjects.AsyEditorObject;
 
 public class SnapPointContainer {
