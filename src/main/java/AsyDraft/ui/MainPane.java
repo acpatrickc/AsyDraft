@@ -10,7 +10,9 @@ import AsyDraft.ui.IconManager.Icons;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -82,11 +84,15 @@ public class MainPane extends BorderPane {
 	private EditorPane editor;
 	private SplitPane splitpane;
 	/*
+	 * left vertical box
+	 * pen chooser for drawing objects
 	 * tabs which display drawn objects and settings
 	 * area which drawn objects will be listed
 	 * Hierarchy:
 	 * TabPane -> Tab -> Accordion -> TitledPane
 	 */
+	private VBox leftbox;
+	private PenChooser penchooser;
 	private TabPane lefttabs;
 	private Tab componentstab;
 	private Tab congruencetab;
@@ -318,15 +324,21 @@ public class MainPane extends BorderPane {
 		labelpane = new TitledPane("labels", new Pane());
 		/*
 		 * forbids tabs from closing
-		 * sets maximum tab pane width
 		 */
 		lefttabs.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
-		lefttabs.setMaxWidth(257);
+		/*
+		 * pen chooser
+		 * left split pane, pen chooser and tabs
+		 * sets maximum width
+		 */
+		penchooser = new PenChooser(editor);
+		leftbox = new VBox(penchooser, lefttabs);
+		leftbox.setMaxWidth(260);
 		/*
 		 * sets locations of objects in borderpane (this)
 		 */
 		setTop(toolmenubars);
-		setLeft(lefttabs);
+		setLeft(leftbox);
 		setCenter(splitpane);
 		/*
 		 * css files are loaded to aid with styling of UI
@@ -334,6 +346,7 @@ public class MainPane extends BorderPane {
 		toolmenubars.getStylesheets().add("toolbar.css");
 		lefttabs.getStylesheets().add("tabs.css");
 		splitpane.getStylesheets().add("splitpane.css");
+		penchooser.getStylesheets().add("penchooser.css");
 		/*
 		 * centers the editor after initializing
 		 */

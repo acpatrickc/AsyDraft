@@ -1,15 +1,19 @@
 package AsyDraft.asyObjects;
 
+import AsyDraft.AsyProperties.AsyPen;
+
 public class AsyLabel implements AsyObject {
 	/*
 	 * coordinates
 	 * direction
 	 * LaTeX string
+	 * pen of this object
 	 */
 	private double x;
 	private double y;
 	private Direction dir;
 	private String tex;
+	private AsyPen pen;
 	public enum Direction {
 		N,
 		NE,
@@ -24,11 +28,12 @@ public class AsyLabel implements AsyObject {
 	/*
 	 * instantiates an AsyLabel with coordinates and direction
 	 */
-	public AsyLabel(double x, double y, Direction d, String tex) {
+	public AsyLabel(double x, double y, Direction d, String tex, AsyPen p) {
 		this.x = x;
 		this.y = y;
 		dir = d;
 		this.tex = tex;
+		pen = p;
 	}
 	
 	@Override
@@ -37,4 +42,8 @@ public class AsyLabel implements AsyObject {
 		return null;
 	}
 	
+	@Override
+	public AsyPen getAsyPen() {
+		return pen;
+	}
 }

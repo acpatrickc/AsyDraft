@@ -7,6 +7,7 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 
+import AsyDraft.AsyProperties.AsyPen;
 import AsyDraft.asyObjects.AsyLabel;
 import AsyDraft.asyObjects.AsyLabel.Direction;
 import AsyDraft.asyObjects.AsyObject;
@@ -23,21 +24,24 @@ public class AsyEditorLabel implements AsyEditorObject {
 	 * direction of label
 	 * LaTeX string
 	 * LaTex image
+	 * the pen used in drawing this object
 	 */
 	private double x;
 	private double y;
 	private Direction dir;
 	private String tex;
 	private WritableImage img;
+	private AsyPen pen;
 	/*
 	 * initiates an AsyEditorLabel
 	 * position as array {x, y}
 	 */
-	public AsyEditorLabel(double[] pos, double[] dir, double scale, String tex) {
+	public AsyEditorLabel(double[] pos, double[] dir, double scale, String tex, AsyPen p) {
 		x = pos[0];
 		y = pos[1];
 		this.tex = tex;
 		this.dir = getDirection(pos, dir, scale);
+		this.pen = p;
 		/*
 		 * generates image of this label
 		 */
@@ -47,6 +51,7 @@ public class AsyEditorLabel implements AsyEditorObject {
 		} catch (ParseException e) {
 			icon = new TeXFormula("ERROR").createTeXIcon(TeXConstants.STYLE_TEXT, 12);
 		}
+		icon.setForeground(new java.awt.Color((float) pen.getRed(), (float) pen.getGreen(), (float) pen.getBlue() ,1));
 		int margin = 3;
 		BufferedImage tempimg = new BufferedImage(icon.getIconWidth() + 2 * margin, icon.getIconHeight() + 2 * margin, BufferedImage.TYPE_INT_ARGB);
 		icon.paintIcon(null, tempimg.getGraphics(), margin, margin);
@@ -57,7 +62,7 @@ public class AsyEditorLabel implements AsyEditorObject {
 	 */
 	@Override
 	public AsyObject getAsyObject(int gridwidth, int gridheight) {
-		return new AsyLabel(MathUtils.toCartesian(x, gridwidth), MathUtils.toCartesian(y, gridheight), dir, tex);
+		return new AsyLabel(MathUtils.toCartesian(x, gridwidth), MathUtils.toCartesian(y, gridheight), dir, tex, pen);
 	}
 	/*
 	 * draws this label on the drawing plane

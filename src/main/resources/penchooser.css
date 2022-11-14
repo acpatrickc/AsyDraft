@@ -1,0 +1,55 @@
+* {
+   -fx-selectable-default: rgb(224, 224, 224);
+   -fx-selectable-hover: rgb(214, 214, 214);
+   -fx-selectable-pressed: rgb(195, 195, 195);
+   -fx-component-border: rgb(200, 200, 200);
+}
+
+Slider {
+	-fx-padding: 0 4 0 0;
+}
+
+Slider .track {
+	-fx-background-color: rgb(212, 212, 212);
+}
+
+Slider .thumb {
+	-fx-border-radius: 100;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+Slider .thumb:hover {
+	-fx-background-color:-fx-selectable-hover;
+}
+
+Slider .thumb:pressed {
+	-fx-background-color:-fx-selectable-pressed;
+}
+
+Spinner {
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+Spinner .text-field {
+	-fx-background-insets: 0;
+}
+
+Spinner .increment-arrow-button, .decrement-arrow-button {
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-border-color:-fx-component-border;
+	-fx-background-color:-fx-selectable-default;
+}
+
+Spinner .increment-arrow-button:hover, .decrement-arrow-button:hover {
+	-fx-background-color:-fx-selectable-hover;
+}
+
+Spinner .increment-arrow-button:pressed, .decrement-arrow-button:pressed {
+	-fx-background-color:-fx-selectable-pressed;
+}

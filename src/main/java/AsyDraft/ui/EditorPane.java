@@ -1,5 +1,6 @@
 package AsyDraft.ui;
 
+import AsyDraft.AsyProperties.AsyPen;
 import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
 import AsyDraft.ui.FunctionPointTracker.Functions;
 import javafx.event.EventHandler;
@@ -65,6 +66,10 @@ public class EditorPane extends Pane {
 	private EditorObjectManager objectmanager = new EditorObjectManager();
 	private SnapPointContainer snapcontainer = new SnapPointContainer(true, objectmanager);
 	private SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
+	/*
+	 * the pen used to draw new objects
+	 */
+	private AsyPen currentpen = new AsyPen(0, 0, 0, 0, 0);
 	/*
 	 * canvas, the JavaFX object that the editor is drawn onto
 	 */
@@ -201,7 +206,7 @@ public class EditorPane extends Pane {
 			@Override
 			public void handle(MouseEvent e) {
 				if (!isdragging) {
-					pointtracker.feedPoint(snappoint.getX(), snappoint.getY(), scale, width, height);
+					pointtracker.feedPoint(snappoint.getX(), snappoint.getY(), scale, width, height, currentpen);
 					while (!pointtracker.waitlistEmpty()) {
 						objectmanager.addEditorObject(pointtracker.takeEditorObject());
 					}
@@ -289,14 +294,16 @@ public class EditorPane extends Pane {
 		 * draws drawing plane
 		 * translates to margins
 		 * draws grid or selected style
+		 * resets dashes
 		 */
 		gc.setFill(Color.grayRgb(210));
 		gc.fillRect(0, 0, getWidth(), getHeight());
 		gc.translate(shiftx, shifty);
-		gc.setFill(Color.grayRgb(255));
+		gc.setFill(Color.WHITE);
 		gc.fillRoundRect(0, 0, width * scale + 2 * margin, height * scale + 2 * margin, 8, 8);
 		gc.translate(margin, margin);
 		gc.setLineWidth(1);
+		gc.setLineDashes(0);
 		if (style.equals(Style.pegboard)) {
 			gc.setStroke(Color.BLACK);
 			gc.setFill(Color.BLACK);
@@ -326,6 +333,7 @@ public class EditorPane extends Pane {
 		if (mousevalid) {
 			gc.setStroke(Color.GREEN);
 			gc.setLineWidth(1.5);
+			gc.setLineDashes(0);
 			gc.translate(shiftx + margin, shifty + margin);
 			gc.strokeOval(pxScale(snappoint.getX()) - 4, pxScale(snappoint.getY()) - 4, 8, 8);
 			gc.translate(- (shiftx + margin), - (shifty + margin));
@@ -405,5 +413,11 @@ public class EditorPane extends Pane {
 	 */
 	public HBox getLabelSettings() {
 		return pointtracker.getLabelSettings();
+	}
+	/*
+	 * sets the current used AsyPen
+	 */
+	public void setPen(AsyPen p) {
+		currentpen = p;
 	}
 }

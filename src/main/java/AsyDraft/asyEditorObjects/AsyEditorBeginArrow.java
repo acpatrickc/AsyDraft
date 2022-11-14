@@ -1,5 +1,6 @@
 package AsyDraft.asyEditorObjects;
 
+import AsyDraft.AsyProperties.AsyPen;
 import AsyDraft.asyObjects.AsyBeginArrow;
 import AsyDraft.asyObjects.AsyObject;
 import AsyDraft.ui.MathUtils;
@@ -11,15 +12,15 @@ public class AsyEditorBeginArrow extends AsyEditorSegment {
 	 * initiates an AsyEditorBeginArrow and indentifies significant points that can be snapped onto
 	 * start and end coordinates in array as {x, y}
 	 */
-	public AsyEditorBeginArrow(double[] start, double[] end) {
-		super(start, end);
+	public AsyEditorBeginArrow(double[] start, double[] end, AsyPen p) {
+		super(start, end, p);
 	}
 	/*
 	 * returns an AsyBeginArrow with normal cartesian coordinates
 	 */
 	@Override
 	public AsyObject getAsyObject(int gridwidth, int gridheight) {
-		return new AsyBeginArrow(MathUtils.toCartesian(startx, gridwidth), MathUtils.toCartesian(starty, gridheight), MathUtils.toCartesian(endx, gridwidth), MathUtils.toCartesian(endy, gridheight));
+		return new AsyBeginArrow(MathUtils.toCartesian(startx, gridwidth), MathUtils.toCartesian(starty, gridheight), MathUtils.toCartesian(endx, gridwidth), MathUtils.toCartesian(endy, gridheight), pen);
 	}
 	/*
 	 * draws this arrow on the drawing plane
@@ -27,7 +28,7 @@ public class AsyEditorBeginArrow extends AsyEditorSegment {
 	@Override
 	public void render(double scale, GraphicsContext gc) {
 		super.render(scale, gc);
-		gc.setFill(Color.BLACK);
+		gc.setFill(new Color(pen.getRed(), pen.getGreen(), pen.getBlue(), 1));
 		/*
 		 * calculates angle of rotation with hypotenuse and opposite
 		 * reflects rotation direction if endx < startx

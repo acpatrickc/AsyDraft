@@ -3,6 +3,7 @@ package AsyDraft.ui;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import AsyDraft.AsyProperties.AsyPen;
 import AsyDraft.asyEditorObjects.AsyEditorBeginArrow;
 import AsyDraft.asyEditorObjects.AsyEditorCircle;
 import AsyDraft.asyEditorObjects.AsyEditorDot;
@@ -158,7 +159,7 @@ public class FunctionPointTracker {
 	 * accepts LaTeX, in case the function requires text
 	 * if the number of points required for a function is fulfilled, the object(s) in this function is/are added to the waitlist
 	 */
-	public void feedPoint(double x, double y, double scale, int gridw, int gridh) {
+	public void feedPoint(double x, double y, double scale, int gridw, int gridh, AsyPen p) {
 		if (!currentfunction.equals(Functions.nofunction)) {
 			/*
 			 * makes sure the same point is not selected consecutively, unless a label
@@ -173,22 +174,22 @@ public class FunctionPointTracker {
 				double[] firstpoint = points.peekFirst();
 				switch (currentfunction) {
 					case segment:
-						waitlist.add(new AsyEditorSegment(points.remove(), points.remove()));
+						waitlist.add(new AsyEditorSegment(points.remove(), points.remove(), p));
 						break;
 					case beginarrow:
-						waitlist.add(new AsyEditorBeginArrow(points.remove(), points.remove()));
+						waitlist.add(new AsyEditorBeginArrow(points.remove(), points.remove(), p));
 						break;
 					case endarrow:
-						waitlist.add(new AsyEditorEndArrow(points.remove(), points.remove()));
+						waitlist.add(new AsyEditorEndArrow(points.remove(), points.remove(), p));
 						break;
 					case doublearrow:
-						waitlist.add(new AsyEditorDoubleArrow(points.remove(), points.remove()));
+						waitlist.add(new AsyEditorDoubleArrow(points.remove(), points.remove(), p));
 						break;
 					case midarrow:
-						waitlist.add(new AsyEditorMidArrow(points.remove(), points.remove()));
+						waitlist.add(new AsyEditorMidArrow(points.remove(), points.remove(), p));
 						break;
 					case label:
-						waitlist.add(new AsyEditorLabel(points.remove(), points.remove(), scale, getLabelTeX()));
+						waitlist.add(new AsyEditorLabel(points.remove(), points.remove(), scale, getLabelTeX(), p));
 						labelletterspinner.getValueFactory().increment(1);
 						break;
 					case circle:
@@ -196,7 +197,7 @@ public class FunctionPointTracker {
 						 * if circle if valid, add circle else removes invalid last point (just added)
 						 */
 						if (circleValid(firstpoint[0], firstpoint[1], x, y, gridw, gridh)) {
-							waitlist.add(new AsyEditorCircle(points.remove(), points.remove()));
+							waitlist.add(new AsyEditorCircle(points.remove(), points.remove(), p));
 						} else points.removeLast();
 						break;
 					case circumcircle:
@@ -204,7 +205,7 @@ public class FunctionPointTracker {
 					case incircle:
 						break;
 					case dot:
-						waitlist.add(new AsyEditorDot(points.remove()));
+						waitlist.add(new AsyEditorDot(points.remove(), p));
 						break;
 					case nofunction:
 						break;
@@ -212,12 +213,11 @@ public class FunctionPointTracker {
 						break;
 				}
 				/*
-				 * clears point list
 				 * reverts to certain point depending on selection modes
-				 * only if the current point is not rejected
+				 * only if the point list is empty, meaning an object was successfully created
+				 * and only if the function is not a dot, which does nto need lock or loop selection
 				 */
-				if (points.size() == requiredpoints.get(currentfunction)) {
-					points.clear();
+				if (points.isEmpty() && !currentfunction.equals(Functions.dot)) {
 					switch (currentselectionmode) {
 						case drop:
 							break;
@@ -265,6 +265,9 @@ public class FunctionPointTracker {
 					AsyEditorLabel.drawPreview(points.peek(), new double[] {x, y}, scale, getLabelTeX(), gc, validshadowcolor);
 					break;
 				case circle:
+					/*
+					 * circle preview color based off if a circle is within bounds
+					 */
 					AsyEditorCircle.drawPreview(scale, gc, points.peek(), new double[] {x, y}, circleValid(points.peek()[0], points.peek()[1], x, y, gridw, gridh) ? validshadowcolor : invalidshadowcolor);
 					break;
 				case circumcircle:

@@ -1,5 +1,6 @@
 package AsyDraft.asyEditorObjects;
 
+import AsyDraft.AsyProperties.AsyPen;
 import AsyDraft.asyObjects.AsyDot;
 import AsyDraft.asyObjects.AsyObject;
 import AsyDraft.ui.MathUtils;
@@ -10,32 +11,33 @@ import javafx.scene.paint.Color;
 public class AsyEditorDot implements AsyEditorObject {
 	/*
 	 * coordinates (on grid)
+	 * the pen used to color this object
 	 */
 	private double x;
 	private double y;
+	private AsyPen pen;
 	/*
 	 * initiates an AsyEditorDot
 	 * position as array {x, y}
 	 */
-	public AsyEditorDot(double[] pos) {
+	public AsyEditorDot(double[] pos, AsyPen p) {
 		x = pos[0];
 		y = pos[1];
+		pen = p;
 	}
 	/*
 	 * returns an AsySegment with normal cartesian coordinates
 	 */
 	@Override
 	public AsyObject getAsyObject(int gridwidth, int gridheight) {
-		return new AsyDot(MathUtils.toCartesian(x, gridwidth), MathUtils.toCartesian(y, gridheight));
+		return new AsyDot(MathUtils.toCartesian(x, gridwidth), MathUtils.toCartesian(y, gridheight), pen);
 	}
 	/*
 	 * draws this dot on the drawing plane
 	 */
 	@Override
 	public void render(double scale, GraphicsContext gc) {
-		gc.setStroke(Color.BLACK);
-		gc.setFill(Color.BLACK);
-		gc.setLineWidth(1);
+		gc.setFill(new Color(pen.getRed(), pen.getGreen(), pen.getBlue(), 1));
 		gc.fillOval(x * scale - 3, y * scale - 3, 6, 6);
 	}
 	/*

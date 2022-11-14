@@ -1,5 +1,5 @@
 .split-pane-divider {
 	-fx-background-color: rgb(248, 248, 248);
 	-fx-border-color: rgb(200, 200, 200);
-    -fx-border-width: 0 1 0 1;
+    -fx-border-width: 1 1 1 1;
 }
