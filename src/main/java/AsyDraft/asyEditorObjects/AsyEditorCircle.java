@@ -1,6 +1,6 @@
 package AsyDraft.asyEditorObjects;
 
-import AsyDraft.AsyProperties.AsyPen;
+import AsyDraft.asyGenerator.AsyPen;
 import AsyDraft.asyObjects.AsyCircle;
 import AsyDraft.asyObjects.AsyObject;
 import AsyDraft.ui.MathUtils;

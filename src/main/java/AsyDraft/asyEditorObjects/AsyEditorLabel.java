@@ -7,7 +7,7 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 
-import AsyDraft.AsyProperties.AsyPen;
+import AsyDraft.asyGenerator.AsyPen;
 import AsyDraft.asyObjects.AsyLabel;
 import AsyDraft.asyObjects.AsyLabel.Direction;
 import AsyDraft.asyObjects.AsyObject;

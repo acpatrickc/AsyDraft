@@ -1,6 +1,7 @@
 package AsyDraft.asyObjects;
 
-import AsyDraft.AsyProperties.AsyPen;
+import AsyDraft.asyGenerator.AsyPair;
+import AsyDraft.asyGenerator.AsyPen;
 
 public class AsyCircle implements AsyObject {
 	/*
@@ -20,15 +21,25 @@ public class AsyCircle implements AsyObject {
 		radius = r;
 		pen = p;
 	}
-	
+	/*
+	 * returns pairs that identify this object
+	 */
 	@Override
-	public String generateAsyString() {
-		// TODO Auto-generated method stub
-		return null;
+	public AsyPair[] getAsyPairs() {
+		return new AsyPair[] {new AsyPair(centerx, centery)};
 	}
-	
+	/*
+	 * returns the pen of this object
+	 */
 	@Override
 	public AsyPen getAsyPen() {
 		return pen;
+	}
+	/*
+	 * returns the radius of this object as a string argument
+	 */
+	@Override
+	public String[] getStringArgs() {
+		return new String[] {Double.toString(radius)};
 	}
 }

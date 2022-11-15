@@ -1,6 +1,6 @@
 package AsyDraft.ui;
 
-import AsyDraft.AsyProperties.AsyPen;
+import AsyDraft.asyGenerator.AsyPen;
 import AsyDraft.ui.FunctionPointTracker.FunctionSelectionMode;
 import AsyDraft.ui.FunctionPointTracker.Functions;
 import javafx.event.EventHandler;
@@ -205,7 +205,7 @@ public class EditorPane extends Pane {
 		canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				if (!isdragging) {
+				if (!isdragging && mousevalid) {
 					pointtracker.feedPoint(snappoint.getX(), snappoint.getY(), scale, width, height, currentpen);
 					while (!pointtracker.waitlistEmpty()) {
 						objectmanager.addEditorObject(pointtracker.takeEditorObject());
@@ -309,11 +309,11 @@ public class EditorPane extends Pane {
 			gc.setFill(Color.BLACK);
 			for (double x = 0; x <= width * scale + 1; x += scale) {	
 				for (double y = 0; y <= height * scale + 1; y += scale) {
-					gc.fillOval(x-1, y-1, 2, 2);
+					gc.fillOval(x - 1, y - 1, 2, 2);
 				}
 			}
 		} else if (style.equals(Style.grid)) {
-			gc.setStroke(Color.LIGHTGRAY);
+			gc.setStroke(Color.grayRgb(230));
 			for (double x = 0; x <= width * scale + 1; x += scale) {	
 				gc.strokeLine(x, 0, x, height * scale);
 			}

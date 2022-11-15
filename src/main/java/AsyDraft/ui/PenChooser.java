@@ -1,6 +1,6 @@
 package AsyDraft.ui;
 
-import AsyDraft.AsyProperties.AsyPen;
+import AsyDraft.asyGenerator.AsyPen;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
@@ -74,7 +74,7 @@ public class PenChooser extends GridPane {
 		spacespinner.valueProperty().addListener(e -> {updateDisplay();});
 		linespinner.valueProperty().addListener(e -> {updateDisplay();});
 		/*
-		 * adds components to this PenChooser
+		 * adds components to this PenChooser and sets height of last two rows
 		 */
 		add(display, 0, 1, 3, 1);
 		add(new Label("red"), 0, 2);

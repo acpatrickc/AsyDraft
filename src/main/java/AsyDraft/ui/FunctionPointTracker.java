@@ -3,7 +3,6 @@ package AsyDraft.ui;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import AsyDraft.AsyProperties.AsyPen;
 import AsyDraft.asyEditorObjects.AsyEditorBeginArrow;
 import AsyDraft.asyEditorObjects.AsyEditorCircle;
 import AsyDraft.asyEditorObjects.AsyEditorDot;
@@ -13,6 +12,7 @@ import AsyDraft.asyEditorObjects.AsyEditorLabel;
 import AsyDraft.asyEditorObjects.AsyEditorMidArrow;
 import AsyDraft.asyEditorObjects.AsyEditorObject;
 import AsyDraft.asyEditorObjects.AsyEditorSegment;
+import AsyDraft.asyGenerator.AsyPen;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;

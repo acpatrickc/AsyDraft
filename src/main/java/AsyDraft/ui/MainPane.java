@@ -37,8 +37,8 @@ public class MainPane extends BorderPane {
 	private ToolBarItem redo;
 	private ToolBarItem mouse;
 	private ToolBarItem segment;
-	private ToolBarItem arrow;
-	private ToolBarItem reversearrow;
+	private ToolBarItem endarrow;
+	private ToolBarItem beginarrow;
 	private ToolBarItem midarrow;
 	private ToolBarItem doublearrow;
 	private ToolBarItem circle;
@@ -48,7 +48,7 @@ public class MainPane extends BorderPane {
 	private ToolBarItem parallel;
 	private ToolBarItem perpendicular;
 	private ToolBarItem rightangle;
-	private ToolBarItem point;
+	private ToolBarItem dot;
 	private ToolBarItem anglebisector;
 	private ToolBarItem congruentangle;
 	private ToolBarItem congruentsegment;
@@ -119,73 +119,73 @@ public class MainPane extends BorderPane {
 		/*
 		 * initiates buttons used to toggle each function of this program
 		 */
-		undo = new ToolBarItem(Icons.undo, "", new EventHandler<ActionEvent>() {
+		undo = new ToolBarItem(Icons.undo, "undo", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.undo();
 			}
 		});
-		redo = new ToolBarItem(Icons.redo, "", new EventHandler<ActionEvent>() {
+		redo = new ToolBarItem(Icons.redo, "redo", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.redo();
 			}
 		});
-		mouse = new ToolBarItem(Icons.mouse, "", new EventHandler<ActionEvent>() {
+		mouse = new ToolBarItem(Icons.mouse, "mouse", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.nofunction);
 			}
 		});
-		segment = new ToolBarItem(Icons.segment, "", new EventHandler<ActionEvent>() {
+		segment = new ToolBarItem(Icons.segment, "segment", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.segment);
 			}
 		});
-		arrow = new ToolBarItem(Icons.arrow, "", new EventHandler<ActionEvent>() {
+		endarrow = new ToolBarItem(Icons.endarrow, "end arrow", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.endarrow);
 			}
 		});
-		reversearrow = new ToolBarItem(Icons.reversearrow, "", new EventHandler<ActionEvent>() {
+		beginarrow = new ToolBarItem(Icons.beginarrow, "begin arrow", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.beginarrow);
 			}
 		});
-		midarrow = new ToolBarItem(Icons.midarrow, "", new EventHandler<ActionEvent>() {
+		midarrow = new ToolBarItem(Icons.midarrow, "mid arrow", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.midarrow);
 			}
 		});
-		doublearrow = new ToolBarItem(Icons.doublearrow, "", new EventHandler<ActionEvent>() {
+		doublearrow = new ToolBarItem(Icons.doublearrow, "double arrow", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.doublearrow);
 			}
 		});
-		point = new ToolBarItem(Icons.point, "", new EventHandler<ActionEvent>() {
+		dot = new ToolBarItem(Icons.dot, "dot", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.dot);
 			}
 		});
-		circle = new ToolBarItem(Icons.circle, "", new EventHandler<ActionEvent>() {
+		circle = new ToolBarItem(Icons.circle, "circle", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.circle);
 			}
 		});
-		label = new ToolBarItem(Icons.label, "", new EventHandler<ActionEvent>() {
+		label = new ToolBarItem(Icons.label, "label", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.setFunction(Functions.label);
 			}
 		});
-		center = new ToolBarItem(Icons.center, "", new EventHandler<ActionEvent>() {
+		center = new ToolBarItem(Icons.center, "center", new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				editor.center();
@@ -284,8 +284,8 @@ public class MainPane extends BorderPane {
 			, center);
 		settingstoolbar.getStyleClass().add("settingstoolbar");
 		drawingtoolbar = new ToolBar(mouse, new Separator()
-			, segment, arrow, reversearrow, midarrow, doublearrow, new Separator()
-			, point, new Separator()
+			, segment, endarrow, beginarrow, midarrow, doublearrow, new Separator()
+			, dot, new Separator()
 			, label, new Separator()
 			, circle, new Separator()
 			, tangent, incircle, circumcircle, new Separator()

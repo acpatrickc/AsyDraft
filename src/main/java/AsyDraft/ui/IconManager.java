@@ -18,8 +18,8 @@ public abstract class IconManager {
 		mouse,
 		segment,
 		circle,
-		arrow,
-		reversearrow,
+		endarrow,
+		beginarrow,
 		midarrow,
 		doublearrow,
 		incircle,
@@ -28,7 +28,7 @@ public abstract class IconManager {
 		parallel,
 		perpendicular,
 		rightangle,
-		point,
+		dot,
 		anglebisector,
 		congruentangle,
 		congruentsegment,
@@ -55,10 +55,10 @@ public abstract class IconManager {
 			case segment:
 				stream = IconManager.class.getResourceAsStream("/icons/segment.png");
 				break;				
-			case arrow:
+			case endarrow:
 				stream = IconManager.class.getResourceAsStream("/icons/arrow.png");
 				break;
-			case reversearrow:
+			case beginarrow:
 				stream = IconManager.class.getResourceAsStream("/icons/reversearrow.png");
 				break;
 			case midarrow:
@@ -88,7 +88,7 @@ public abstract class IconManager {
 			case rightangle:
 				stream = IconManager.class.getResourceAsStream("/icons/rightangle.png");
 				break;					
-			case point:
+			case dot:
 				stream = IconManager.class.getResourceAsStream("/icons/point.png");
 				break;					
 			case anglebisector:
