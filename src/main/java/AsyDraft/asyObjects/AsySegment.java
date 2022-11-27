@@ -1,6 +1,5 @@
 package AsyDraft.asyObjects;
 
-import AsyDraft.asyGenerator.AsyPair;
 import AsyDraft.asyGenerator.AsyPen;
 
 public class AsySegment implements AsyObject {
@@ -24,24 +23,10 @@ public class AsySegment implements AsyObject {
 		pen = p;
 	}
 	/*
-	 * returns pairs that identify this object
-	 */
-	@Override
-	public AsyPair[] getAsyPairs() {
-		return new AsyPair[] {new AsyPair(startx, starty), new AsyPair(endx, endy)};
-	}
-	/*
 	 * returns the pen of this object
 	 */
 	@Override
 	public AsyPen getAsyPen() {
 		return pen;
-	}
-	/*
-	 * returns no string arguments as this is a normal line
-	 */
-	@Override
-	public String[] getStringArgs() {
-		return new String[] {};
 	}
 }

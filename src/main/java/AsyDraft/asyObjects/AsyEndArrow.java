@@ -11,11 +11,4 @@ public class AsyEndArrow extends AsySegment {
 		super(x0, y0, x1, y1, p);
 		// TODO Auto-generated constructor stub
 	}
-	/*
-	 * identifies EndArrow to asymptote
-	 */
-	@Override
-	public String[] getStringArgs() {
-		return new String[] {"EndArrow"};
-	}
 }

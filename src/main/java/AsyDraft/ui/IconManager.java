@@ -1,7 +1,5 @@
 package AsyDraft.ui;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import javafx.scene.effect.GaussianBlur;

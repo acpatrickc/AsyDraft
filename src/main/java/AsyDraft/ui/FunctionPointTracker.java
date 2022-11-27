@@ -92,27 +92,16 @@ public class FunctionPointTracker {
 		 * label letter spinner which increments alphabetically
 		 */
 		labelletterspinner = new Spinner<>(1, 17576, 2);
-		labelletterspinner.setEditable(true);
+		labelletterspinner.setEditable(false);
 		labelletterspinner.setPrefWidth(140);
 		labelletterspinner.getValueFactory().setConverter(new StringConverter<Integer>() {
 			@Override
 			public String toString(Integer i) {
-				return MathUtils.toAlphabet(i);
+				return MathUtils.toTexAlphabet(i);
 			}
 			@Override
 			public Integer fromString(String s) {
-				char[] letters = s.toUpperCase().toCharArray();
-				int i = letters.length - 1;
-				int value = 0;
-				/*
-				 * A=1 B=2 etc.
-				 * converts to base 10
-				 */
-				for (char c : letters) {
-					value += (((int) c) - 64) * Math.pow(26, i);
-					i--;
-				}
-				return value;
+				return null;
 			}
 			
 		});
@@ -314,7 +303,7 @@ public class FunctionPointTracker {
 	 * returns the tex string for the label
 	 */
 	private String getLabelTeX() {
-		return labelmode.getValue().equals("custom") ? labeltext.getText() : MathUtils.toAlphabet(labelletterspinner.getValue());
+		return labelmode.getValue().equals("custom") ? labeltext.getText() : MathUtils.toTexAlphabet(labelletterspinner.getValue());
 	}
 	/*
 	 * checks if a circle is valid within the grid

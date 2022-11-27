@@ -44,11 +44,4 @@ public class AsyPen {
 	public double getIntervalLength() {
 		return intervallength;
 	}
-	/*
-	 * returns the AsyExpression that this pen is represented by
-	 * TODO add linetype
-	 */
-	public AsyExpression getAsyExpression() {
-		return new AsyExpression("rgb", red, green, blue);
-	}
 }

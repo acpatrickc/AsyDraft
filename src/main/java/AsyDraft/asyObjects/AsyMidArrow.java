@@ -10,11 +10,4 @@ public class AsyMidArrow extends AsySegment {
 	public AsyMidArrow(double x0, double y0, double x1, double y1, AsyPen p) {
 		super(x0, y0, x1, y1, p);
 	}
-	/*
-	 * identifies MidArrow to asymptote
-	 */
-	@Override
-	public String[] getStringArgs() {
-		return new String[] {"MidArrow"};
-	}
 }

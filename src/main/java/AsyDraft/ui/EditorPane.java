@@ -65,7 +65,7 @@ public class EditorPane extends Pane {
 	private FunctionPointTracker pointtracker = new FunctionPointTracker(FunctionSelectionMode.drop);
 	private EditorObjectManager objectmanager = new EditorObjectManager();
 	private SnapPointContainer snapcontainer = new SnapPointContainer(true, objectmanager);
-	private SnapPoint snappoint = snapcontainer.snap(gridScale(gridmousex), gridScale(gridmousey));
+	private SnapPoint snappoint = new SnapPoint();
 	/*
 	 * the pen used to draw new objects
 	 */

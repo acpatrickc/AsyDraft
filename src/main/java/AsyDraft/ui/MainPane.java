@@ -10,9 +10,7 @@ import AsyDraft.ui.IconManager.Icons;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -113,8 +111,12 @@ public class MainPane extends BorderPane {
 	
 	public MainPane() {
 		/*
+		 * resultarea where code is outputted
 		 * the editor pane, where all drawing is done
 		 */
+		resultarea = new CodeArea();
+		resultarea.setParagraphGraphicFactory(LineNumberFactory.get(resultarea));
+		resultarea.setWrapText(true);
 		editor = new EditorPane(10, 10, 50);
 		/*
 		 * initiates buttons used to toggle each function of this program
@@ -297,9 +299,6 @@ public class MainPane extends BorderPane {
 		 */
 		menu = new MenuBar(new Menu("File"), new Menu("Edit"), new Menu("Help"));
 		toolmenubars = new VBox(menu, settingstoolbar, drawingtoolbar);
-		resultarea = new CodeArea();
-		resultarea.setParagraphGraphicFactory(LineNumberFactory.get(resultarea));
-		resultarea.setWrapText(true);
 		splitpane = new SplitPane(editor, resultarea);
 		splitpane.setDividerPositions(0.6);
 		/*

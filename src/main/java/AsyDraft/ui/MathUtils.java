@@ -8,10 +8,10 @@ public abstract class MathUtils {
 		return gridwidth - in;
 	}
 	/*
-	 * converts number to alphabetical
-	 * basically a base converter b10 to b26, store remainder, repeat with quotient
+	 * converts number to alphabetical with subscript
+	 * 1 indexed
 	 */
-	public static String toAlphabet(int i) {
-		return i < 1 ? "" : toAlphabet((i - 1) / 26) + (char) (65 + (i - 1) % 26);
+	public static String toTexAlphabet(int i) {
+		return i < 1 ? "" : (char) (65 + (i - 1) % 26) + ((i - 1) / 26 == 0 ? "" : "_{" + (i - 1) / 26 + "}");
 	}
 }

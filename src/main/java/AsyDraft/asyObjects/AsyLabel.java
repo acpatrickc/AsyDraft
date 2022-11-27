@@ -1,6 +1,5 @@
 package AsyDraft.asyObjects;
 
-import AsyDraft.asyGenerator.AsyPair;
 import AsyDraft.asyGenerator.AsyPen;
 
 public class AsyLabel implements AsyObject {
@@ -37,24 +36,10 @@ public class AsyLabel implements AsyObject {
 		pen = p;
 	}
 	/*
-	 * returns pairs that identify this object
-	 */
-	@Override
-	public AsyPair[] getAsyPairs() {
-		return new AsyPair[] {new AsyPair(x, y)};
-	}
-	/*
 	 * returns the pen of this object
 	 */
 	@Override
 	public AsyPen getAsyPen() {
 		return pen;
-	}
-	/*
-	 * returns the tex data of this object as a formatted argument
-	 */
-	@Override
-	public String[] getStringArgs() {
-		return new String[] {"$" + tex + "$"};
 	}
 }
